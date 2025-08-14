@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const user = require('../models/User')
 
 const { body, validationResult } = require('express-validator');
 
@@ -13,7 +14,7 @@ router.post('/', [
     min: 8
   })
 
-], function (req, res, next) {
+], async function (req, res, next) {
 
   const errors = validationResult(req)
 
@@ -25,10 +26,28 @@ router.post('/', [
     })
   }
 
-  res.json({
-    status: "success",
-    message: "Successfully signed up"
-  });
+  try{
+    const {name, email, password} = req.body
+
+    userdata = await user.findOne({email})
+    if (userdata) {
+      return res.status(422).json({
+        "status":"failed",
+        "errors":[{msg:"User already exists with this email id"}]
+      })
+    }
+
+    res.json({
+      status: "success",
+      message: "Successfully signed up"
+    });
+  } catch (err) {
+    res.status(500).json({
+      "status":"failed",
+      "error":"Some Internal Server error occured"
+    })
+  }
+
 
 });
 
