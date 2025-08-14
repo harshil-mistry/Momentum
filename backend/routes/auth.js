@@ -1,0 +1,13 @@
+var express = require('express');
+var router = express.Router();
+const auth = require('../middleware/auth')
+const user = require('../models/User')
+
+/* GET home page. */
+router.post('/', auth, async function(req, res, next) {
+    const id = req.user
+    const data = await user.findById(id)
+    res.json(data)
+});
+
+module.exports = router;
