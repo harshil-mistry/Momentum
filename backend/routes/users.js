@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const user = require('../models/User')
+const bcrypt = require('bcryptjs')
 
 const { body, validationResult } = require('express-validator');
 
@@ -29,6 +30,7 @@ router.post('/', [
   try{
     const {name, email, password} = req.body
 
+    //Checking whether a user already exists with the given email
     userdata = await user.findOne({email})
     if (userdata) {
       return res.status(422).json({
@@ -36,6 +38,13 @@ router.post('/', [
         "errors":[{msg:"User already exists with this email id"}]
       })
     }
+
+    var salt = await bcrypt.genSalt(10)
+    var password_hash = await bcrypt.hash(password, salt)
+
+    newuser = new user({name, email, password:password_hash})
+
+    await newuser.save()
 
     res.json({
       status: "success",
