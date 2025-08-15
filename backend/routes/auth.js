@@ -18,4 +18,10 @@ router.post('/admin', adminauth, async function(req, res, next) {
     res.json(data)
 });
 
+//Fetching all the data for testing
+router.post('/data', adminauth, async function (req, res, next) {
+    const data = await user.find({'isAdminUser':false}).select('-password')
+    res.json(data)
+})
+
 module.exports = router;

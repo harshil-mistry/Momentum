@@ -10,7 +10,7 @@ const { body, validationResult, check } = require('express-validator');
 //POST req for user signup
 router.post('/signup', [
 
-  //This middleware is for checking for proper parameters are being passde ot not
+  //This middleware is for checking for proper parameters are being passde ot not (validation)
   body('name', 'Please enter a proper name').notEmpty(),
   body('email', 'Please enter a valid email').isEmail(),
   body('password', 'The Password should have minimum 8 characters').isLength({
