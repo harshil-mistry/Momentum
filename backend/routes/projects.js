@@ -59,11 +59,21 @@ router.get('/:id', auth, async (req, res, next) => {
     try {
         const data = await project.findById(id)
         if (data.owner != user_id) {
-            res.status(401).json()
+            return res.status(401).json({
+                "status":"failed",
+                "errors":[{
+                    "msg":"You do not have access to this Project"
+                }]
+            })
         }
         res.json(data)
     } catch {
-        res.send("Invalid Project ID entered")
+        res.status(500).json({
+            "status": "failed",
+            "errors": [{
+                "msg": "Internal Server Error"
+            }]
+        })
     }
 })
 
