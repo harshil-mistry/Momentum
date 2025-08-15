@@ -84,7 +84,7 @@ router.post('/signin', [
 
   //Validating inputs
   body('email', 'Please enter a valid email').notEmpty().isEmail(),
-  body('password', 'The Password should be at least 8 characters').notEmpty().isLength({ min: 8 })
+  body('password', 'The Password is required').notEmpty()
 
 ], async (req, res) => {
 

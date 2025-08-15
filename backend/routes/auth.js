@@ -1,10 +1,18 @@
 var express = require('express');
 var router = express.Router();
 const auth = require('../middleware/auth')
+const adminauth = require('../middleware/admin')
 const user = require('../models/User')
 
-/* GET home page. */
+//Testing User Auth
 router.post('/', auth, async function(req, res, next) {
+    const id = req.user
+    const data = await user.findById(id)
+    res.json(data)
+});
+
+//Testing Admin Auth
+router.post('/admin', adminauth, async function(req, res, next) {
     const id = req.user
     const data = await user.findById(id)
     res.json(data)
