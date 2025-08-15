@@ -5,8 +5,7 @@ const ProjectSchema = new mongoose.Schema({
         required: true
     },
     description: {
-        type: String,
-        required: true
+        type: String
     },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
@@ -16,3 +15,7 @@ const ProjectSchema = new mongoose.Schema({
 }, {
     timestamps:true
 })
+
+const Project = new mongoose.model('projects', ProjectSchema)
+
+module.exports = Project
