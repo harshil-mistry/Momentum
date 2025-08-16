@@ -4,6 +4,7 @@ const user = require('../models/User')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const config = require('config')
+const auth = require('../middleware/auth')
 
 const { body, validationResult, check } = require('express-validator');
 
@@ -130,11 +131,11 @@ router.post('/signin', [
         id: userdata.id
       }
     }
-    jwt.sign(payload, config.get('jwtSecret'), (err, token)=>{
+    jwt.sign(payload, config.get('jwtSecret'), (err, token) => {
       if (err) throw err
       res.json({
-        "status":"success",
-        "token":token  
+        "status": "success",
+        "token": token
       })
     })
 
@@ -144,6 +145,64 @@ router.post('/signin', [
       "error": "Some Internal Server error occured"
     })
   }
+
+})
+
+//Change Password Functionality
+router.put('/password', [auth, [
+  body('old_password', 'Please enter existing password').notEmpty(),
+  body('new_password', 'New password should be at least 8 characters').isLength({ min: 8 })
+]], async (req, res) => {
+
+  //Checking for errors in data
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({
+      "status": "failed",
+      "errors": errors.array()
+    })
+  }
+
+  //Fetching user details
+  const { old_password, new_password } = req.body
+  try {
+
+    const data = await user.findById(req.user)
+    const password = data.password
+    //Checking for password mismatch
+    const isCorrect = await bcrypt.compare(old_password, password)
+
+    console.log(isCorrect)
+    if(!isCorrect) {
+      return res.status(422).json({
+        "status":"failed",
+        "errors":[{
+          "msg":"Please enter correct existing password"
+        }]
+      })
+    }
+
+    const salt = await bcrypt.genSalt(10)
+    const new_password_hash = await bcrypt.hash(new_password, salt)
+    data.password = new_password_hash 
+    data.save()
+
+    res.json({
+      "status":"success",
+      "message":"Password changed successfully"
+    })
+
+
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({
+      "status": "failed",
+      "errors": [{
+        "msg": "Internal Server Error"
+      }]
+    })
+  }
+
 
 })
 

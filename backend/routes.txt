@@ -5,15 +5,19 @@ User MiddleWare testing -> /api/auth -> post
 Admin MiddleWare testing -> /api/auth/admin -> post
 Admin Fetch all Users testing -> /api/auth/data -> post
 
-------------------------------------------------------------------
-Pending Routes :
-------------------------------------------------------------------
-
 New Project -> /api/project -> post
 Get all Projects -> api/project -> get
 
 Get a single Project Details -> api/project/_id -> get
-Update Project Details -> api/project/_id -> post
-Delete a project -> api/project/_id -> delete
 
-Issues & Notes APIs
+------------------------------------------------------------------
+Pending Routes :
+------------------------------------------------------------------
+
+Change User Password -> api/users/password -> put
+Delete a user -> /api/users -> delete (Delete all the related projects and issues and notes and everything)
+
+Update Project Details -> api/project/_id -> put
+Delete a project -> api/project/_id -> delete (Delete all the issues and notes regarding the project)
+
+Issues & Notes APIs to be added later on
