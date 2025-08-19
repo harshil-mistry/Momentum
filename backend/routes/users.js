@@ -173,23 +173,23 @@ router.put('/password', [auth, [
     const isCorrect = await bcrypt.compare(old_password, password)
 
     console.log(isCorrect)
-    if(!isCorrect) {
+    if (!isCorrect) {
       return res.status(422).json({
-        "status":"failed",
-        "errors":[{
-          "msg":"Please enter correct existing password"
+        "status": "failed",
+        "errors": [{
+          "msg": "Please enter correct existing password"
         }]
       })
     }
 
     const salt = await bcrypt.genSalt(10)
     const new_password_hash = await bcrypt.hash(new_password, salt)
-    data.password = new_password_hash 
+    data.password = new_password_hash
     data.save()
 
     res.json({
-      "status":"success",
-      "message":"Password changed successfully"
+      "status": "success",
+      "message": "Password changed successfully"
     })
 
 
@@ -204,6 +204,29 @@ router.put('/password', [auth, [
   }
 
 
+})
+
+//Delete User
+router.delete('/', auth, async (req, res) => {
+  try {
+    const userdata = await user.findById(req.user)
+    if (userdata) await userdata.deleteOne()
+    else return res.status(401).json({
+      "status": "failed",
+      "errors": [{
+        "msg": "No user found"
+      }]
+    })
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({
+      "status":"failed",
+      "errors":[{
+        "msg":"Internal Server Error"
+      }]
+    })
+  }
+  res.send("Done")
 })
 
 module.exports = router;

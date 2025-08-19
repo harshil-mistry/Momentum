@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const cors = require('cors')
 
 //Initializing the MongoDB
 const initDB = require('./config/db')
@@ -14,6 +15,8 @@ var authRouter = require('./routes/auth');
 var projectRouter = require('./routes/projects');
 
 var app = express();
+
+app.use(cors())
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

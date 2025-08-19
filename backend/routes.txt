@@ -1,5 +1,6 @@
 User Signup -> /api/users/signup -> post
 User Signin -> /api/users/signin -> post
+Change User Password -> api/users/password -> put
 
 User MiddleWare testing -> /api/auth -> post
 Admin MiddleWare testing -> /api/auth/admin -> post
@@ -14,10 +15,20 @@ Get a single Project Details -> api/project/_id -> get
 Pending Routes :
 ------------------------------------------------------------------
 
-Change User Password -> api/users/password -> put
 Delete a user -> /api/users -> delete (Delete all the related projects and issues and notes and everything)
 
 Update Project Details -> api/project/_id -> put
 Delete a project -> api/project/_id -> delete (Delete all the issues and notes regarding the project)
 
+Fetch all issues of a project -> api/issues/project_id -> get
+Add an issue -> api/issues/project_id -> post
+Update an issue -> api/issues/_id -> put
+Delete an issue -> api/issues/_id -> delete
+
 Issues & Notes APIs to be added later on
+
+Also make apis to change the state of the issues which will be used in the kanban board
+
+#To-do
+Add code to delete projects of the deleted user -> Add this code in the model file
+Add code to delete issues and notes of the deleted project -> Add this code in the model file
