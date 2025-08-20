@@ -5,13 +5,23 @@ const IssueSchema = mongoose.Schema({
         type:String,
         required:true
     },
-    issue:{
-        type:String,
-        required:true
+    description:{
+        type:String
     },
     project:{
         type:mongoose.Types.ObjectId,
         ref:"projects"
+    },
+    status:{
+        type:Number,
+        enum:{
+            values:[0, 1, 2],
+            message:"Invalid Status number entered"
+        }
+    },
+    priority:{
+        type:Number,
+        enum:[0, 1, 2]
     }
 })
 

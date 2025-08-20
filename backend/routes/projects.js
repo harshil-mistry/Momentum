@@ -122,9 +122,9 @@ router.put('/:id', [auth, [
     const { name, description } = req.body
     const project_data = {
         name,
+        description,
         owner: req.user
     }
-    project_data.description = description || ''
 
     //updating project details
     try {
@@ -152,7 +152,7 @@ router.put('/:id', [auth, [
     }
 })
 
-//updating project details
+//deleting project details
 router.delete('/:id', [auth], async (req, res) => {
 
     //Checking for user ownership
