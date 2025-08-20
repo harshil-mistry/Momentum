@@ -152,4 +152,54 @@ router.put('/:id', [auth, [
     }
 })
 
+//updating project details
+router.delete('/:id', [auth], async (req, res) => {
+
+    //Checking for user ownership
+    const project_id = req.params.id
+    const user_id = req.user
+    try {
+        const data = await project.findById(project_id)
+        const project_owner = data.owner
+        console.log(project_owner)
+        console.log(user_id)
+
+        if (project_owner != user_id) {
+            return res.status(401).json({
+                "status": "failed",
+                "errors": [{
+                    "msg": "You are not authorized for this project"
+                }]
+            })
+        }
+
+    } catch (error) {
+        return res.status(404).json({
+            "status": "failed",
+            "errors": [{
+                "msg": "No Project found with the given ID"
+            }]
+        })
+    }
+
+    //Deleting the project
+    try {
+        await project.findOneAndDelete({ _id: project_id })
+        return res.json({
+            "status": "success",
+            "message": "Project Deleted Successfully"
+        })
+    } catch (error) {
+
+        console.log(error)
+        res.status(500).json({
+            "status": "failed",
+            "errors": [{
+                "msg": "Internal Server Error"
+            }]
+        })
+    }
+
+})
+
 module.exports = router
