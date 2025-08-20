@@ -1,6 +1,7 @@
 User Signup -> /api/users/signup -> post
 User Signin -> /api/users/signin -> post
 Change User Password -> api/users/password -> put
+Delete a user -> /api/users -> delete (Delete all the related projects and issues and notes and everything)
 
 User MiddleWare testing -> /api/auth -> post
 Admin MiddleWare testing -> /api/auth/admin -> post
@@ -14,8 +15,6 @@ Get a single Project Details -> api/project/_id -> get
 ------------------------------------------------------------------
 Pending Routes :
 ------------------------------------------------------------------
-
-Delete a user -> /api/users -> delete (Delete all the related projects and issues and notes and everything)
 
 Update Project Details -> api/project/_id -> put
 Delete a project -> api/project/_id -> delete (Delete all the issues and notes regarding the project)

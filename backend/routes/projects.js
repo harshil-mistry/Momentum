@@ -53,6 +53,7 @@ router.post('/', [auth, [
     }
 })
 
+//Get a single project detialss
 router.get('/:id', auth, async (req, res, next) => {
     const user_id = req.user
     const id = req.params.id
@@ -60,14 +61,88 @@ router.get('/:id', auth, async (req, res, next) => {
         const data = await project.findById(id)
         if (data.owner != user_id) {
             return res.status(401).json({
-                "status":"failed",
-                "errors":[{
-                    "msg":"You do not have access to this Project"
+                "status": "failed",
+                "errors": [{
+                    "msg": "You do not have access to this Project"
                 }]
             })
         }
         res.json(data)
     } catch {
+        res.status(500).json({
+            "status": "failed",
+            "errors": [{
+                "msg": "Internal Server Error"
+            }]
+        })
+    }
+})
+
+//updating project details
+router.put('/:id', [auth, [
+    body('name', 'Please enter a name').notEmpty()
+]], async (req, res) => {
+
+    //Performing data validation
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({
+            "status": "failed",
+            "errors": errors.array()
+        })
+    }
+
+    //Checking for user ownership
+    const project_id = req.params.id
+    const user_id = req.user
+    try {
+        const data = await project.findById(project_id)
+        const project_owner = data.owner
+        console.log(project_owner)
+        console.log(user_id)
+
+        if (project_owner != user_id) {
+            return res.status(401).json({
+                "status": "failed",
+                "errors": [{
+                    "msg": "You are not authorized for this project"
+                }]
+            })
+        }
+
+    } catch (error) {
+        return res.status(404).json({
+            "status": "failed",
+            "errors": [{
+                "msg": "No Project found with the given ID"
+            }]
+        })
+    }
+
+    const { name, description } = req.body
+    const project_data = {
+        name,
+        owner: req.user
+    }
+    project_data.description = description || ''
+
+    //updating project details
+    try {
+        const updated_project = await project.findByIdAndUpdate(project_id, project_data)
+        if (!updated_project) {
+            return res.status(400).json({
+                "status": "failed",
+                "errors": [{
+                    "msg": "Failed to update the document"
+                }]
+            })
+        }
+        res.json({
+            "status": "success",
+            "message": "Project Details Updated",
+        })
+    } catch (err) {
+        console.log(err)
         res.status(500).json({
             "status": "failed",
             "errors": [{
