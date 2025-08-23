@@ -179,7 +179,38 @@ router.delete('/:id', auth, async (req, res) => {
     }
 })
 
-//TO-DO : Fetching all issues of a project
+router.get('/:project_id', auth, async(req, res) => {
+
+    try {
+
+        //checking for authorization
+        const project_id = req.params.project_id
+        const project_data = await project.findById(project_id)
+        if (project_data.owner != req.user) {
+            res.status(401).json({
+                "status":"failed",
+                "errors":[{
+                    "msg":"Unauthorized access"
+                }]
+            })
+        }
+        console.log(project_id)
+        const issues = await issue.find({project:new mongoose.Types.ObjectId(project_id)})
+        console.log(issues)
+        res.json({
+            "issues": issues
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            "status":"failed",
+            "errors":[{
+                "msg":"Internal Server Error"
+            }]
+        })
+    }
+})
+
 //TO-DO : Changing the state of the issue (0 <-> 1 <-> 2)
 
 module.exports = router

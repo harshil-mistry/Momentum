@@ -16,12 +16,12 @@ Delete a project -> api/project/_id -> delete (Delete all the issues and notes r
 
 Add an issue -> api/issues/project_id -> post
 Update an issue -> api/issues/_id -> put
+Delete an issue -> api/issues/_id -> delete
 
 ------------------------------------------------------------------
 Pending Routes :
 ------------------------------------------------------------------
 
-Delete an issue -> api/issues/_id -> delete
 Fetch all issues of a project -> api/issues/project_id -> get
 
 Issues & Notes APIs to be added later on
