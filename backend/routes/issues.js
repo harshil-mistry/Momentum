@@ -71,7 +71,71 @@ router.post('/:project_id', [auth, [
 
 })
 
-//TO-DO : Updating an issue
+//Updating an issue
+router.put('/:id', [auth, [
+    body('name', 'Please enter a name').notEmpty()
+]], async (req, res) => {
+
+    //Performing data validation
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({
+            "status": "failed",
+            "errors": errors.array()
+        })
+    }
+
+    try {
+
+        //Checking for authorized access
+        const issue_id = req.params.id
+        const issue_data = await issue.findById(issue_id).populate('project')
+        console.log(issue_data)
+        if (req.user != issue_data.project.owner) {
+            console.log(req.user, issue_data.owner)
+            return res.status(401).json({
+                "status":"failed",
+                "errors":[{
+                    "msg":"Unauthorized access"
+                }]
+            })
+        }
+
+        //updating Issue
+        const {name, description, status, priority} = req.body
+        const new_issue = {
+            name
+        }
+        new_issue.description = description? description : ""
+        if (status) new_issue.status = status
+        if (priority) new_issue.priority = priority
+        
+        const updated = await issue.findByIdAndUpdate(issue_id, new_issue)
+        if(!updated) {
+            return res.status(400).json({
+                "status":"failed",
+                "errors":[{
+                    "msg":"Failed to update the issue"
+                }]
+            })
+        }
+
+        res.json({
+            "status":"success",
+            "message":"Issue updated successfully"
+        })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            "status":"failed",
+            "errors":[{
+                "msg":"Internal Server Error"
+            }]
+        })
+    }
+})
+
 //TO-DO : Deleting an issue
 //TO-DO : Fetching all issues of a project
 //TO-DO : Changing the state of the issue (0 <-> 1 <-> 2)
