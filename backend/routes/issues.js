@@ -73,7 +73,15 @@ router.post('/:project_id', [auth, [
 
 //Updating an issue
 router.put('/:id', [auth, [
-    body('name', 'Please enter a name').notEmpty()
+    body('name', 'Please enter a name').notEmpty(),
+    body('status')
+    .if(body('status').exists())
+        .isInt().withMessage('Please enter an Integer Value')
+    .isIn([0, 1, 2]).withMessage("The status must be from 0, 1 and 2"),
+    body('priority')
+    .if(body('priority').exists())
+    .isInt().withMessage('Please enter an Integer Value')
+    .isIn([0, 1, 2]).withMessage("The priority must be from 0, 1 and 2")
 ]], async (req, res) => {
 
     //Performing data validation
@@ -90,9 +98,7 @@ router.put('/:id', [auth, [
         //Checking for authorized access
         const issue_id = req.params.id
         const issue_data = await issue.findById(issue_id).populate('project')
-        console.log(issue_data)
         if (req.user != issue_data.project.owner) {
-            console.log(req.user, issue_data.owner)
             return res.status(401).json({
                 "status":"failed",
                 "errors":[{
@@ -136,7 +142,43 @@ router.put('/:id', [auth, [
     }
 })
 
-//TO-DO : Deleting an issue
+//Deleting an issue
+router.delete('/:id', auth, async (req, res) => {
+
+    try {
+
+        //Checking for authorized access
+        const issue_id = req.params.id
+        const issue_data = await issue.findById(issue_id).populate('project')
+        console.log(issue_data)
+        if (req.user != issue_data.project.owner) {
+            console.log(req.user, issue_data.owner)
+            return res.status(401).json({
+                "status":"failed",
+                "errors":[{
+                    "msg":"Unauthorized access"
+                }]
+            })
+        }
+
+       await issue.findByIdAndDelete(issue_id)
+
+        res.json({
+            "status":"success",
+            "message":"Issue deleted successfully"
+        })
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            "status":"failed",
+            "errors":[{
+                "msg":"Internal Server Error"
+            }]
+        })
+    }
+})
+
 //TO-DO : Fetching all issues of a project
 //TO-DO : Changing the state of the issue (0 <-> 1 <-> 2)
 

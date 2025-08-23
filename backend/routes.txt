@@ -15,12 +15,12 @@ Update Project Details -> api/project/_id -> put
 Delete a project -> api/project/_id -> delete (Delete all the issues and notes regarding the project)
 
 Add an issue -> api/issues/project_id -> post
+Update an issue -> api/issues/_id -> put
 
 ------------------------------------------------------------------
 Pending Routes :
 ------------------------------------------------------------------
 
-Update an issue -> api/issues/_id -> put
 Delete an issue -> api/issues/_id -> delete
 Fetch all issues of a project -> api/issues/project_id -> get
 
