@@ -101,8 +101,8 @@ router.put('/:id', [auth, [
             })
         }
 
-        //updating Issue
-        const { name, content} = req.body
+        //updating Note
+        const { name, content } = req.body
         const new_note = {
             name,
             content
@@ -134,17 +134,15 @@ router.put('/:id', [auth, [
     }
 })
 
-//Deleting an issue
+//Deleting a note
 router.delete('/:id', auth, async (req, res) => {
 
     try {
 
         //Checking for authorized access
-        const issue_id = req.params.id
-        const issue_data = await issue.findById(issue_id).populate('project')
-        console.log(issue_data)
-        if (req.user != issue_data.project.owner) {
-            console.log(req.user, issue_data.owner)
+        const noteid = req.params.id
+        const note_data = await note.findById(noteid).populate('project')
+        if (req.user != note_data.project.owner) {
             return res.status(401).json({
                 "status": "failed",
                 "errors": [{
@@ -153,11 +151,11 @@ router.delete('/:id', auth, async (req, res) => {
             })
         }
 
-        await issue.findByIdAndDelete(issue_id)
+        await note.findByIdAndDelete(noteid)
 
         res.json({
             "status": "success",
-            "message": "Issue deleted successfully"
+            "message": "Note deleted successfully"
         })
 
     } catch (error) {
@@ -171,7 +169,7 @@ router.delete('/:id', auth, async (req, res) => {
     }
 })
 
-//Get all the issues for a particular project
+//Get all the notes for a particular project
 router.get('/:project_id', auth, async (req, res) => {
 
     try {
@@ -180,53 +178,6 @@ router.get('/:project_id', auth, async (req, res) => {
         const project_id = req.params.project_id
         const project_data = await project.findById(project_id)
         if (project_data.owner != req.user) {
-            res.status(401).json({
-                "status": "failed",
-                "errors": [{
-                    "msg": "Unauthorized access"
-                }]
-            })
-        }
-        console.log(project_id)
-        const issues = await issue.find({ project: new mongoose.Types.ObjectId(project_id) })
-        console.log(issues)
-        res.json({
-            "issues": issues
-        })
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({
-            "status": "failed",
-            "errors": [{
-                "msg": "Internal Server Error"
-            }]
-        })
-    }
-})
-
-//Change the status of the issue
-router.patch('/:id', [auth, [
-    body('status')
-        .notEmpty().withMessage("A status is required")
-        .isInt().withMessage("The status has to be an integer")
-        .isIn([0, 1, 2]).withMessage("Status need to be from 0, 1 and 2")
-]], async (req, res) => {
-
-    //Performing data validation
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(422).json({
-            "status": "failed",
-            "errors": errors.array()
-        })
-    }
-
-    try {
-
-        //Checking for authorized access
-        const issue_id = req.params.id
-        const issue_data = await issue.findById(issue_id).populate('project')
-        if (req.user != issue_data.project.owner) {
             return res.status(401).json({
                 "status": "failed",
                 "errors": [{
@@ -234,15 +185,11 @@ router.patch('/:id', [auth, [
                 }]
             })
         }
-        const newstatus = req.body.status
-        issue_data.status = newstatus
-        await issue_data.save()
-
+        console.log(project_id)
+        const notes = await note.find({ project: new mongoose.Types.ObjectId(project_id) })
         res.json({
-            "status": "success",
-            "message": "Issue status changed successfully"
+            "notes": notes
         })
-
     } catch (error) {
         console.log(error)
         res.status(500).json({
@@ -251,7 +198,6 @@ router.patch('/:id', [auth, [
                 "msg": "Internal Server Error"
             }]
         })
-
     }
 })
 
