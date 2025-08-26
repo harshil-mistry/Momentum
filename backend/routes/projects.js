@@ -184,7 +184,14 @@ router.delete('/:id', [auth], async (req, res) => {
 
     //Deleting the project
     try {
-        await project.findOneAndDelete({ _id: project_id })
+        const project_data = await project.findById(project_id)
+        if (project_data) await project_data.deleteOne()
+        else return res.status(404).json({
+            "status": "failed",
+            "errors": [{
+                "msg": "Project not found"
+            }]
+        })
         return res.json({
             "status": "success",
             "message": "Project Deleted Successfully"
