@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Issue = require('./Issue')
+const Note = require('./Note')
 const ProjectSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -27,6 +28,13 @@ ProjectSchema.pre('deleteOne', { document: true, query: false }, async function(
             // const projectdetails = project.findById(project._id)
             // await projectdetails.deleteOne()
             await issue_data.deleteOne()
+        });
+        const Notes = await Note.find({project:this._id})
+        console.log(Notes)
+        Notes.forEach(async function (note_data) {
+            // const projectdetails = project.findById(project._id)
+            // await projectdetails.deleteOne()
+            await note_data.deleteOne()
         });
         console.log("In middleware")
     } catch (error) {

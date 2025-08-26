@@ -22,14 +22,14 @@ Delete an issue -> api/issue/_id -> delete
 Fetch all issues of a project -> api/issue/project_id -> get
 Change status of the issue -> api/issue/_id -> patch (To be called from the kanban board)
 
-------------------------------------------------------------------
-Pending Routes :
-------------------------------------------------------------------
-
 Add new note -> api/notes/project_id -> post
 Fetch all notes -> api/notes/project_id -> get
 Update note -> api/notes/_id -> put
 Delete note -> api/notes/_id -> delete
+
+------------------------------------------------------------------
+Pending Routes :
+------------------------------------------------------------------
 
 #To-do
 Notes Cascade deleting with the Project
