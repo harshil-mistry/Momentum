@@ -32,4 +32,4 @@ Update note -> api/notes/_id -> put
 Delete note -> api/notes/_id -> delete
 
 #To-do
-Notes Cascade deleting
+Notes Cascade deleting with the Project

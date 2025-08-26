@@ -5,6 +5,7 @@ const adminauth = require('../middleware/admin')
 const user = require('../models/User')
 const project = require('../models/Project');
 const Issue = require('../models/Issue');
+const Note = require('../models/Note');
 
 //Testing User Auth
 router.post('/', auth, async function (req, res, next) {
@@ -35,6 +36,17 @@ router.post('/projects', adminauth, async function (req, res, next) {
 //Fetching all issues for testing
 router.post('/issues', adminauth, async (req, res) => {
     const data = await Issue.find().populate({
+        path: 'project',
+        populate: {
+            path: 'owner'
+        }
+    })
+    res.json(data)
+})
+
+//Fetching all notes for testing
+router.post('/notes', adminauth, async (req, res) => {
+    const data = await Note.find().populate({
         path: 'project',
         populate: {
             path: 'owner'
