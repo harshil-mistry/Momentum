@@ -26,10 +26,3 @@ Add new note -> api/notes/project_id -> post
 Fetch all notes -> api/notes/project_id -> get
 Update note -> api/notes/_id -> put
 Delete note -> api/notes/_id -> delete
-
-------------------------------------------------------------------
-Pending Routes :
-------------------------------------------------------------------
-
-#To-do
-Notes Cascade deleting with the Project
