@@ -1,18 +1,20 @@
 User Signup -> /api/users/signup -> post
 User Signin -> /api/users/signin -> post
+Get user profile -> /api/users/profile -> get
 Change User Password -> api/users/password -> put
 Delete a user -> /api/users -> delete
 
 User MiddleWare testing -> /api/auth -> post
 Admin MiddleWare testing -> /api/auth/admin -> post
 Admin Fetch all Users testing -> /api/auth/data -> post
+Fetch all Projects -> /api/auth/projects -> post
+Fetch all Issues -> /api/auth/issues -> post
 
 New Project -> /api/project -> post
 Get all Projects -> api/project -> get
-
 Get a single Project Details -> api/project/_id -> get
 Update Project Details -> api/project/_id -> put
-Delete a project -> api/project/_id -> delete (Delete all the issues and notes regarding the project)
+Delete a project -> api/project/_id -> delete
 
 Add an issue -> api/issue/project_id -> post
 Update an issue -> api/issue/_id -> put
@@ -25,9 +27,9 @@ Pending Routes :
 ------------------------------------------------------------------
 
 Add new note -> api/notes/project_id -> post
+Fetch all notes -> api/notes/project_id -> get
 Update note -> api/notes/_id -> put
 Delete note -> api/notes/_id -> delete
 
 #To-do
-Add code to delete projects of the deleted user -> Add this code in the model file
-Add code to delete issues and notes of the deleted project -> Add this code in the model file
+Notes Cascade deleting

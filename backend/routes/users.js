@@ -8,6 +8,20 @@ const auth = require('../middleware/auth')
 
 const { body, validationResult, check } = require('express-validator');
 
+//Fetch user details
+router.get('/profile', auth, async (req, res) => {
+  const userid = req.user
+  const userdata = await user.findById(userid).select('-password -createdAt -__v')
+  console.log(userdata)
+  if (userdata) return res.json(userdata)
+  else res.status(404).json({
+    "status": "failed",
+    "errors": [{
+      "msg": "User not found"
+    }]
+  })
+})
+
 //POST req for user signup
 router.post('/signup', [
 
@@ -220,13 +234,16 @@ router.delete('/', auth, async (req, res) => {
   } catch (error) {
     console.log(error)
     return res.status(500).json({
-      "status":"failed",
-      "errors":[{
-        "msg":"Internal Server Error"
+      "status": "failed",
+      "errors": [{
+        "msg": "Internal Server Error"
       }]
     })
   }
-  res.send("Done")
+  res.json({
+    "status": "success",
+    "message": "User Deleted Successfully"
+  })
 })
 
 module.exports = router;
