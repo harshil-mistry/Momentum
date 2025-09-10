@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle, Users, Zap, Target, TrendingUp, Star, Play } from 'lucide-react';
 
 const HomePage = () => {
@@ -133,18 +134,20 @@ const HomePage = () => {
               transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
               className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12"
             >
-              <motion.button
-                className="group px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2"
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <span>Start Free Trial</span>
+              <Link to="/signup">
                 <motion.div
-                  className="group-hover:translate-x-1 transition-transform duration-300"
+                  className="group px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2"
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <ArrowRight className="w-5 h-5" />
+                  <span>Start Free Trial</span>
+                  <motion.div
+                    className="group-hover:translate-x-1 transition-transform duration-300"
+                  >
+                    <ArrowRight className="w-5 h-5" />
+                  </motion.div>
                 </motion.div>
-              </motion.button>
+              </Link>
               
               <motion.button
                 className="group px-8 py-4 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:border-green-500 dark:hover:border-green-400 hover:text-green-600 dark:hover:text-green-400 transition-all duration-300 flex items-center space-x-2"
@@ -305,14 +308,16 @@ const HomePage = () => {
             <p className="text-xl text-green-100 mb-8 max-w-2xl mx-auto">
               Join thousands of teams who have transformed their productivity with our platform
             </p>
-            <motion.button
-              className="px-8 py-4 bg-white text-green-600 font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2 mx-auto"
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <span>Get Started Today</span>
-              <ArrowRight className="w-5 h-5" />
-            </motion.button>
+            <Link to="/signup">
+              <motion.div
+                className="px-8 py-4 bg-white text-green-600 font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2 mx-auto"
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <span>Get Started Today</span>
+                <ArrowRight className="w-5 h-5" />
+              </motion.div>
+            </Link>
           </motion.div>
         </div>
       </section>

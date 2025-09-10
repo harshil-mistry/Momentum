@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Menu, X, Sun, Moon, Zap } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 
 const Navbar = () => {
@@ -40,24 +41,26 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <motion.div 
-            className="flex items-center space-x-2"
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            <div className="relative">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                className="w-8 h-8 bg-gradient-to-r from-green-400 to-green-600 rounded-lg flex items-center justify-center"
-              >
-                <Zap className="w-4 h-4 text-white" />
-              </motion.div>
-            </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-green-600 to-green-800 dark:from-green-400 dark:to-green-600 bg-clip-text text-transparent">
-              Momentum
-            </span>
-          </motion.div>
+          <Link to="/">
+            <motion.div 
+              className="flex items-center space-x-2"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <div className="relative">
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                  className="w-8 h-8 bg-gradient-to-r from-green-400 to-green-600 rounded-lg flex items-center justify-center"
+                >
+                  <Zap className="w-4 h-4 text-white" />
+                </motion.div>
+              </div>
+              <span className="text-xl font-bold bg-gradient-to-r from-green-600 to-green-800 dark:from-green-400 dark:to-green-600 bg-clip-text text-transparent">
+                Momentum
+              </span>
+            </motion.div>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
@@ -86,20 +89,24 @@ const Navbar = () => {
 
             {/* CTA Buttons */}
             <div className="flex items-center space-x-3">
-              <motion.button
-                className="px-4 py-2 text-green-600 dark:text-green-400 font-medium hover:text-green-700 dark:hover:text-green-300 transition-colors duration-300"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Sign In
-              </motion.button>
-              <motion.button
-                className="px-6 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white font-medium rounded-lg shadow-lg hover:shadow-xl hover:from-green-600 hover:to-green-700 transition-all duration-300"
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Get Started
-              </motion.button>
+              <Link to="/signin">
+                <motion.div
+                  className="px-4 py-2 text-green-600 dark:text-green-400 font-medium hover:text-green-700 dark:hover:text-green-300 transition-colors duration-300"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Sign In
+                </motion.div>
+              </Link>
+              <Link to="/signup">
+                <motion.div
+                  className="px-6 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white font-medium rounded-lg shadow-lg hover:shadow-xl hover:from-green-600 hover:to-green-700 transition-all duration-300"
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Get Started
+                </motion.div>
+              </Link>
             </div>
           </div>
 
@@ -144,19 +151,23 @@ const Navbar = () => {
               </motion.a>
             ))}
             <div className="pt-4 space-y-3">
-              <motion.button
-                className="block w-full text-left text-green-600 dark:text-green-400 font-medium"
-                whileHover={{ x: 10 }}
-              >
-                Sign In
-              </motion.button>
-              <motion.button
-                className="block w-full px-6 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white font-medium rounded-lg shadow-lg text-center"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Get Started
-              </motion.button>
+              <Link to="/signin" onClick={() => setIsMenuOpen(false)}>
+                <motion.div
+                  className="block w-full text-left text-green-600 dark:text-green-400 font-medium"
+                  whileHover={{ x: 10 }}
+                >
+                  Sign In
+                </motion.div>
+              </Link>
+              <Link to="/signup" onClick={() => setIsMenuOpen(false)}>
+                <motion.div
+                  className="block w-full px-6 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white font-medium rounded-lg shadow-lg text-center"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Get Started
+                </motion.div>
+              </Link>
             </div>
           </div>
         </motion.div>
