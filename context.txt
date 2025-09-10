@@ -1,0 +1,9 @@
+Project Workflow Tracker
+
+The Vision: From Chaos to Clarity
+Imagine the start of any new project: a burst of ideas, a list of tasks, and a clear goal. But as work begins, that clarity can quickly fade. Tasks get scattered across random to-do lists, important information is buried in endless notepad files, and a simple question like "What are we working on right now?" becomes surprisingly hard to answer. This mental clutter creates friction, slows down progress, and can turn an exciting venture into a source of stress.
+
+Momentum was born from this exact problem. Its purpose is to provide a calm, clean, and centralized home for your projects. It's designed to be a single source of truth that cuts through the chaos, allowing individuals and small teams to see their entire workflow at a glance and focus on what truly matters: moving forward.
+
+What is Momentum?
+At its heart, Momentum is a digital workspace that helps you organize, visualize, and track the progress of your projects from start to finish. It’s not an overly complex tool with a steep learning curve; instead, it focuses on the essential features you need, presented in a simple and intuitive way. It combines the visual clarity of a task board with the organization of a digital notebook, all within your own private, secure account.

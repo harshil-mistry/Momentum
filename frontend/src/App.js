@@ -1,10 +1,17 @@
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
-import Demo from './components/demo';
+import { ThemeProvider } from './contexts/ThemeContext';
+import Navbar from './components/Navbar';
+import HomePage from './components/HomePage';
 
 function App() {
   return (
-    <Demo/>
+    <ThemeProvider>
+      <div className="App">
+        <Navbar />
+        <HomePage />
+      </div>
+    </ThemeProvider>
   );
 }
 
