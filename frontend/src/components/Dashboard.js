@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Footer from './Footer';
 import CreateProjectModal from './CreateProjectModal';
@@ -18,6 +19,7 @@ import {
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [stats, setStats] = useState([]);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -117,6 +119,11 @@ const Dashboard = () => {
     // Refresh both stats and projects after creating a new project
     fetchDashboardStats();
     fetchProjects();
+  };
+
+  // Navigate to project detail page
+  const handleProjectClick = (projectId) => {
+    navigate(`/project/${projectId}`);
   };
 
   const containerVariants = {
@@ -302,6 +309,8 @@ const Dashboard = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
                     whileHover={{ scale: 1.02, y: -4 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => handleProjectClick(project._id)}
                     className="group cursor-pointer"
                   >
                     <div className="p-6 rounded-2xl shadow-lg transition-all duration-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:border-green-300 dark:hover:border-green-700">

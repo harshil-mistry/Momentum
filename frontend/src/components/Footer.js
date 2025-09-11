@@ -44,6 +44,10 @@ const Footer = () => {
               <span>Node.js</span>
             </span>
             <span className="flex items-center space-x-1">
+              <span className="w-2 h-2 bg-yellow-500 rounded-full"></span>
+              <span>Express.js</span>
+            </span>
+            <span className="flex items-center space-x-1">
               <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
               <span>MongoDB</span>
             </span>

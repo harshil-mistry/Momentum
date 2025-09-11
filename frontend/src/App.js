@@ -8,6 +8,7 @@ import HomePage from './components/HomePage';
 import SignInPage from './components/SignInPage';
 import SignUpPage from './components/SignUpPage';
 import Dashboard from './components/Dashboard';
+import ProjectDetail from './components/Project/ProjectDetail';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -24,6 +25,11 @@ function App() {
               <Route path="/dashboard" element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/project/:projectId/*" element={
+                <ProtectedRoute>
+                  <ProjectDetail />
                 </ProtectedRoute>
               } />
             </Routes>
