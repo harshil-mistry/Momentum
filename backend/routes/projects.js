@@ -2,12 +2,58 @@ const express = require('express')
 const router = express.Router()
 const auth = require('../middleware/auth')
 const project = require('../models/Project')
+const Issue = require('../models/Issue')
 const { body, validationResult, check } = require('express-validator');
 
 //Route to fetch all projects for the user
 router.get('/', auth, async (req, res, next) => {
-    const data = await project.find({ owner: req.user })
-    res.json(data)
+    try {
+        const projects = await project.find({ owner: req.user })
+        
+        // Calculate completion percentage for each project
+        const projectsWithCompletion = await Promise.all(
+            projects.map(async (proj) => {
+                // Find all issues for this project
+                const totalIssues = await Issue.countDocuments({ project: proj._id })
+                
+                if (totalIssues === 0) {
+                    // If no issues exist, completion is 0%
+                    return {
+                        ...proj.toObject(),
+                        completionPercentage: 0,
+                        totalIssues: 0,
+                        completedIssues: 0
+                    }
+                }
+                
+                // Find completed issues (status = 2)
+                const completedIssues = await Issue.countDocuments({ 
+                    project: proj._id, 
+                    status: 2 
+                })
+                
+                // Calculate completion percentage
+                const completionPercentage = Math.round((completedIssues / totalIssues) * 100)
+                
+                return {
+                    ...proj.toObject(),
+                    completionPercentage,
+                    totalIssues,
+                    completedIssues
+                }
+            })
+        )
+        
+        res.json(projectsWithCompletion)
+    } catch (error) {
+        console.error('Error fetching projects with completion:', error)
+        res.status(500).json({
+            status: 'failed',
+            errors: [{
+                msg: 'Internal Server Error'
+            }]
+        })
+    }
 })
 
 //Route to add a nre Project
@@ -53,7 +99,7 @@ router.post('/', [auth, [
     }
 })
 
-//Get a single project detialss
+//Get a single project details
 router.get('/:id', auth, async (req, res, next) => {
     const user_id = req.user
     const id = req.params.id
@@ -67,8 +113,31 @@ router.get('/:id', auth, async (req, res, next) => {
                 }]
             })
         }
-        res.json(data)
-    } catch {
+
+        // Calculate completion percentage for this project
+        const totalIssues = await Issue.countDocuments({ project: id })
+        
+        let completionPercentage = 0
+        let completedIssues = 0
+        
+        if (totalIssues > 0) {
+            completedIssues = await Issue.countDocuments({ 
+                project: id, 
+                status: 2 
+            })
+            completionPercentage = Math.round((completedIssues / totalIssues) * 100)
+        }
+
+        const projectWithCompletion = {
+            ...data.toObject(),
+            completionPercentage,
+            totalIssues,
+            completedIssues
+        }
+
+        res.json(projectWithCompletion)
+    } catch (error) {
+        console.error('Error fetching project details:', error)
         res.status(500).json({
             "status": "failed",
             "errors": [{

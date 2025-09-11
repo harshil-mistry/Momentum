@@ -233,242 +233,157 @@ const Dashboard = () => {
           </motion.div>
         )}
 
-        {/* Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Recent Projects */}
-          <motion.div 
-            variants={itemVariants}
-            className="lg:col-span-2"
-          >
-            <div className="rounded-xl shadow-lg p-6 transition-all duration-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  Your Projects
-                </h2>
-                <button className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-sm hover:shadow-md flex items-center space-x-2">
-                  <Plus className="h-4 w-4" />
-                  <span>New Project</span>
-                </button>
-              </div>
-              
-              <div className="space-y-4">
-                {projectsLoading ? (
-                  // Loading skeleton for projects
-                  [...Array(3)].map((_, index) => (
-                    <div
-                      key={index}
-                      className="p-4 rounded-lg bg-gray-50 dark:bg-gray-700/50 animate-pulse"
-                    >
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="h-5 bg-gray-200 dark:bg-gray-600 rounded w-1/3"></div>
-                        <div className="h-6 bg-gray-200 dark:bg-gray-600 rounded-full w-16"></div>
-                      </div>
-                      <div className="mb-3">
-                        <div className="h-3 bg-gray-200 dark:bg-gray-600 rounded w-3/4 mb-2"></div>
-                        <div className="h-3 bg-gray-200 dark:bg-gray-600 rounded w-1/2"></div>
-                      </div>
-                      <div className="h-2 bg-gray-200 dark:bg-gray-600 rounded-full"></div>
-                    </div>
-                  ))
-                ) : projects.length > 0 ? (
-                  projects.map((project, index) => (
-                    <motion.div
-                      key={project._id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      whileHover={{ scale: 1.01 }}
-                      className="p-4 rounded-lg transition-all duration-200 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer border border-gray-200 dark:border-gray-600"
-                    >
-                      <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-medium text-gray-900 dark:text-white">
-                          {project.name}
-                        </h3>
-                        <span className="px-3 py-1 text-xs font-medium rounded-full bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400">
-                          Active
-                        </span>
-                      </div>
-                      
-                      {project.description && (
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 truncate">
-                          {project.description.length > 100 
-                            ? `${project.description.substring(0, 100)}...` 
-                            : project.description
-                          }
-                        </p>
-                      )}
-                      
-                      <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                        <span>
-                          Created: {new Date(project.createdAt || Date.now()).toLocaleDateString()}
-                        </span>
-                        <div className="flex items-center space-x-2">
-                          <BarChart3 className="h-3 w-3" />
-                          <span>Project</span>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))
-                ) : (
-                  <div className="text-center py-12">
-                    <BarChart3 className="h-12 w-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                      No projects yet
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-400 mb-4">
-                      Get started by creating your first project
-                    </p>
-                    <button className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-sm hover:shadow-md">
-                      Create Project
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Project Overview */}
-          <motion.div variants={itemVariants}>
-            <div className="rounded-xl shadow-lg p-6 transition-all duration-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold flex items-center space-x-2 text-gray-900 dark:text-white">
-                  <Activity className="h-5 w-5" />
-                  <span>Overview</span>
-                </h2>
-              </div>
-              
-              <div className="space-y-6">
-                {/* Quick Stats */}
-                <div className="grid grid-cols-1 gap-4">
-                  <div className="flex items-center justify-between p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
-                    <div className="flex items-center space-x-3">
-                      <div className="p-2 bg-green-500 rounded-lg">
-                        <BarChart3 className="h-4 w-4 text-white" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-green-800 dark:text-green-400">
-                          Active Projects
-                        </p>
-                        <p className="text-xs text-green-600 dark:text-green-500">
-                          {projects.length} project{projects.length !== 1 ? 's' : ''} in progress
-                        </p>
-                      </div>
-                    </div>
-                    <span className="text-lg font-bold text-green-700 dark:text-green-400">
-                      {projects.length}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
-                    <div className="flex items-center space-x-3">
-                      <div className="p-2 bg-blue-500 rounded-lg">
-                        <TrendingUp className="h-4 w-4 text-white" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-blue-800 dark:text-blue-400">
-                          This Month
-                        </p>
-                        <p className="text-xs text-blue-600 dark:text-blue-500">
-                          Projects created recently
-                        </p>
-                      </div>
-                    </div>
-                    <span className="text-lg font-bold text-blue-700 dark:text-blue-400">
-                      {projects.filter(p => {
-                        const projectDate = new Date(p.createdAt || Date.now());
-                        const monthAgo = new Date();
-                        monthAgo.setMonth(monthAgo.getMonth() - 1);
-                        return projectDate > monthAgo;
-                      }).length}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Recent Project Names */}
-                {projects.length > 0 && (
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                      Recent Projects
-                    </h3>
-                    <div className="space-y-2">
-                      {projects.slice(0, 3).map((project, index) => (
-                        <div
-                          key={project._id}
-                          className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors duration-200"
-                        >
-                          <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                              {project.name}
-                            </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              {new Date(project.createdAt || Date.now()).toLocaleDateString()}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Quick Actions */}
+        {/* Projects Grid */}
         <motion.div 
           variants={itemVariants}
-          className="mt-8"
+          className="mb-8"
         >
-          <div className="rounded-xl shadow-lg p-6 transition-all duration-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-            <h2 className="text-xl font-semibold mb-6 text-gray-900 dark:text-white">
-              Quick Actions
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+              My Projects
             </h2>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[
-                { 
-                  icon: Plus, 
-                  label: 'New Project', 
-                  color: 'from-green-500 to-green-600',
-                  description: 'Start a new project'
-                },
-                { 
-                  icon: AlertTriangle, 
-                  label: 'Create Issue', 
-                  color: 'from-orange-500 to-orange-600',
-                  description: 'Track bugs and tasks'
-                },
-                { 
-                  icon: BarChart3, 
-                  label: 'View Projects', 
-                  color: 'from-blue-500 to-blue-600',
-                  description: 'Manage all projects'
-                },
-                { 
-                  icon: Settings, 
-                  label: 'Settings', 
-                  color: 'from-gray-500 to-gray-600',
-                  description: 'Account preferences'
-                }
-              ].map((action, index) => (
-                <motion.button
-                  key={action.label}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`p-4 rounded-lg bg-gradient-to-r ${action.color} text-white transition-all duration-200 shadow-sm hover:shadow-md flex flex-col items-center space-y-2 relative group`}
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2 font-medium"
+            >
+              <Plus className="h-5 w-5" />
+              <span>Create Project</span>
+            </motion.button>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {projectsLoading ? (
+              // Loading skeleton for project tiles
+              [...Array(6)].map((_, index) => (
+                <div
+                  key={index}
+                  className="p-6 rounded-2xl shadow-lg transition-all duration-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 animate-pulse"
                 >
-                  <action.icon className="h-6 w-6" />
-                  <span className="text-sm font-medium">{action.label}</span>
-                  
-                  {/* Tooltip */}
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
-                    {action.description}
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900 dark:border-t-gray-700"></div>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-16 h-6 rounded-full bg-gray-200 dark:bg-gray-700"></div>
                   </div>
-                </motion.button>
-              ))}
-            </div>
+                  <div className="mb-4">
+                    <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
+                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+                    <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+                  </div>
+                  <div className="mb-4">
+                    <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
+                    <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                  </div>
+                  <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
+                </div>
+              ))
+            ) : projects.length > 0 ? (
+              projects.map((project, index) => {
+                // Use the actual completion percentage from the API
+                const completionPercentage = project.completionPercentage || 0;
+                
+                // Generate consistent colors based on project name
+                const colors = [
+                  'from-green-400 to-green-600',
+                  'from-blue-400 to-blue-600',
+                  'from-purple-400 to-purple-600',
+                  'from-orange-400 to-orange-600',
+                  'from-pink-400 to-pink-600',
+                  'from-indigo-400 to-indigo-600'
+                ];
+                const colorIndex = project.name.length % colors.length;
+                const cardColor = colors[colorIndex];
+
+                return (
+                  <motion.div
+                    key={project._id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    whileHover={{ scale: 1.02, y: -4 }}
+                    className="group cursor-pointer"
+                  >
+                    <div className="p-6 rounded-2xl shadow-lg transition-all duration-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:shadow-xl hover:border-green-300 dark:hover:border-green-700">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors duration-200 flex-1 mr-3">
+                          {project.name}
+                        </h3>
+                        <span className={`px-3 py-1 text-xs font-medium rounded-full ${
+                          completionPercentage === 100 
+                            ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400' 
+                            : 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400'
+                        }`}>
+                          {completionPercentage === 100 ? 'Completed' : 'Active'}
+                        </span>
+                      </div>
+                      
+                      <div className="mb-4">
+                        <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 min-h-[2.5rem]">
+                          {project.description || ''}
+                        </p>
+                      </div>
+                      
+                      <div className="mb-4">
+                        <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400 mb-2">
+                          <span>Progress</span>
+                          <span className="font-medium">{completionPercentage}% Complete</span>
+                        </div>
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${completionPercentage}%` }}
+                            transition={{ delay: index * 0.1 + 0.5, duration: 1 }}
+                            className={`h-2 bg-gradient-to-r ${cardColor} rounded-full`}
+                          ></motion.div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                        <div className="flex items-center space-x-1">
+                          <Calendar className="h-3 w-3" />
+                          <span>
+                            Created: {new Date(project.createdAt || Date.now()).toLocaleDateString('en-US', { 
+                              month: 'short', 
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}
+                          </span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <CheckCircle className="h-3 w-3" />
+                          <span>
+                            {project.completedIssues || 0}/{project.totalIssues || 0} issues
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })
+            ) : (
+              <div className="col-span-full">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-center py-16 px-6 rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg"
+                >
+                  <div className="w-24 h-24 mx-auto mb-6 p-6 bg-gradient-to-r from-green-400 to-green-600 rounded-full shadow-lg">
+                    <BarChart3 className="w-full h-full text-white" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                    No projects yet
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+                    Get started by creating your first project and begin managing your tasks efficiently.
+                  </p>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg hover:shadow-xl font-medium"
+                  >
+                    Create Your First Project
+                  </motion.button>
+                </motion.div>
+              </div>
+            )}
           </div>
         </motion.div>
       </div>
