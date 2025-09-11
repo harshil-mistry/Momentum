@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Zap, Check } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { useTheme } from '../contexts/ThemeContext';
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
@@ -18,9 +17,15 @@ const SignUpPage = () => {
   const [errors, setErrors] = useState({});
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
-  const { signup } = useAuth();
-  const { isDarkMode } = useTheme();
+  const { signup, isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect if user is already authenticated
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, loading, navigate]);
 
   const handleChange = (e) => {
     setFormData({
@@ -102,12 +107,21 @@ const SignUpPage = () => {
     }
   };
 
+  // Show loading spinner while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full"
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className={`min-h-screen bg-gradient-to-br transition-colors duration-300 ${
-      isDarkMode 
-        ? 'from-gray-900 via-gray-900 to-green-900/20' 
-        : 'from-green-50 via-white to-green-50'
-    } flex items-center justify-center pt-20 pb-12 px-4 sm:px-6 lg:px-8`}>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-900 dark:to-green-900/20 flex items-center justify-center pt-20 pb-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
       {/* Background Animation */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
@@ -370,19 +384,13 @@ const SignUpPage = () => {
                 />
               </div>
               <div className="ml-3 text-sm">
-                <label htmlFor="terms" className={`${
-                  isDarkMode ? 'text-gray-300' : 'text-gray-700'
-                }`}>
+                <label htmlFor="terms" className="text-gray-700 dark:text-gray-300">
                   I agree to the{' '}
-                  <a href="#" className={`${
-                    isDarkMode ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-500'
-                  }`}>
+                  <a href="#" className="text-green-600 hover:text-green-500 dark:text-green-400 dark:hover:text-green-300">
                     Terms of Service
                   </a>{' '}
                   and{' '}
-                  <a href="#" className={`${
-                    isDarkMode ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-500'
-                  }`}>
+                  <a href="#" className="text-green-600 hover:text-green-500 dark:text-green-400 dark:hover:text-green-300">
                     Privacy Policy
                   </a>
                 </label>

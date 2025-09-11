@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Zap } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { useTheme } from '../contexts/ThemeContext';
 
 const SignInPage = () => {
   const [formData, setFormData] = useState({
@@ -14,9 +13,15 @@ const SignInPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const { login } = useAuth();
-  const { isDarkMode } = useTheme();
+  const { login, isAuthenticated, loading } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect if user is already authenticated
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, loading, navigate]);
 
   const handleChange = (e) => {
     setFormData({
@@ -75,12 +80,21 @@ const SignInPage = () => {
     }
   };
 
+  // Show loading spinner while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full"
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className={`min-h-screen bg-gradient-to-br transition-colors duration-300 ${
-      isDarkMode 
-        ? 'from-gray-900 via-gray-900 to-green-900/20' 
-        : 'from-green-50 via-white to-green-50'
-    } flex items-center justify-center pt-20 pb-12 px-4 sm:px-6 lg:px-8`}>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-900 dark:to-green-900/20 flex items-center justify-center pt-20 pb-12 px-4 sm:px-6 lg:px-8 transition-colors duration-300">
       {/* Background Animation */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
@@ -115,14 +129,10 @@ const SignInPage = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-8"
         >
-          <h2 className={`text-3xl font-bold mb-2 ${
-            isDarkMode ? 'text-white' : 'text-gray-900'
-          }`}>
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             Welcome back
           </h2>
-          <p className={`${
-            isDarkMode ? 'text-gray-400' : 'text-gray-600'
-          }`}>
+          <p className="text-gray-600 dark:text-gray-400">
             Sign in to continue building momentum
           </p>
         </motion.div>
@@ -132,11 +142,7 @@ const SignInPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className={`bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border p-6 sm:p-8 ${
-            isDarkMode 
-              ? 'bg-gray-800/80 border-gray-700/50' 
-              : 'bg-white/80 border-gray-200/50'
-          }`}
+          className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 p-6 sm:p-8"
         >
           <form className="space-y-6" onSubmit={handleSubmit}>
             {errors.general && (

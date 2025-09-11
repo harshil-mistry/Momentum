@@ -22,6 +22,49 @@ router.get('/profile', auth, async (req, res) => {
   })
 })
 
+//Fetch dashboard stats
+router.get('/dashboard-stats', auth, async (req, res) => {
+  try {
+    const userid = req.user
+    const project = require('../models/Project')
+    const issue = require('../models/Issue')
+    
+    // Get total projects count
+    const totalProjects = await project.countDocuments({ owner: userid })
+    
+    // Get all issues for user's projects
+    const userProjects = await project.find({ owner: userid }).select('_id')
+    const projectIds = userProjects.map(proj => proj._id)
+    
+    // Get total issues count
+    const totalIssues = await issue.countDocuments({ project: { $in: projectIds } })
+    
+    // Get pending issues count (status: 0 = pending, 1 = in progress, 2 = completed)
+    const pendingIssues = await issue.countDocuments({ 
+      project: { $in: projectIds }, 
+      status: { $in: [0, 1] } // both pending and in-progress are considered "pending"
+    })
+    
+    return res.json({
+      status: "success",
+      data: {
+        totalProjects,
+        totalIssues,
+        pendingIssues
+      }
+    })
+    
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({
+      "status": "failed",
+      "errors": [{
+        "msg": "Internal Server Error"
+      }]
+    })
+  }
+})
+
 //POST req for user signup
 router.post('/signup', [
 
