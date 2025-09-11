@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
+import Footer from './Footer';
 import { 
   BarChart3, 
   Users, 
@@ -9,15 +10,13 @@ import {
   Clock, 
   TrendingUp,
   Calendar,
-  Bell,
-  Settings,
   Plus,
   Activity,
   AlertTriangle
 } from 'lucide-react';
 
 const Dashboard = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [stats, setStats] = useState([]);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -142,30 +141,16 @@ const Dashboard = () => {
                 Here's what's happening with your projects today.
               </p>
             </div>
-            <div className="flex items-center space-x-3">
-              <motion.button 
-                onClick={handleRefresh}
-                disabled={loading}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="p-2 rounded-lg transition-colors duration-200 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-                title="Refresh Dashboard"
-              >
-                <Activity className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
-              </motion.button>
-              <button className="p-2 rounded-lg transition-colors duration-200 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white shadow-sm hover:shadow-md">
-                <Bell className="h-5 w-5" />
-              </button>
-              <button className="p-2 rounded-lg transition-colors duration-200 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white shadow-sm hover:shadow-md">
-                <Settings className="h-5 w-5" />
-              </button>
-              <button 
-                onClick={logout}
-                className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-sm hover:shadow-md"
-              >
-                Logout
-              </button>
-            </div>
+            <motion.button 
+              onClick={handleRefresh}
+              disabled={loading}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="p-2 rounded-lg transition-colors duration-200 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Refresh Dashboard"
+            >
+              <Activity className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
+            </motion.button>
           </div>
         </motion.div>
 
@@ -386,6 +371,9 @@ const Dashboard = () => {
             )}
           </div>
         </motion.div>
+
+        {/* Footer */}
+        <Footer />
       </div>
     </motion.div>
   );
