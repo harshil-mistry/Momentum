@@ -1,0 +1,47 @@
+/* Kanban Board Optimizations */
+.kanban-drag-optimization {
+  /* Optimize repaints during drag */
+  will-change: transform;
+  /* Hardware acceleration */
+  transform: translateZ(0);
+  /* Optimize rendering */
+  backface-visibility: hidden;
+  /* Smooth transitions */
+  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Optimize drappable areas */
+[data-rbd-droppable-id] {
+  /* Enable hardware acceleration */
+  transform: translateZ(0);
+  /* Optimize reflows */
+  contain: layout style paint;
+}
+
+/* Optimize draggable items */
+[data-rbd-draggable-id] {
+  /* Optimize for animations */
+  will-change: transform;
+  /* Reduce paint complexity */
+  contain: layout;
+}
+
+/* Reduce motion for better performance during drag */
+[data-rbd-draggable-id]:not([data-rbd-drag-handle-context-id]) {
+  transition: all 0.15s cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Dragging state optimizations */
+[data-rbd-draggable-id][data-rbd-drag-handle-context-id] {
+  /* Disable transitions during drag for better performance */
+  transition: none !important;
+  /* Optimize rendering */
+  will-change: transform;
+  /* Ensure proper cursor positioning */
+  transform: none !important;
+}
+
+/* Reduce box-shadow complexity during drag */
+.dragging-optimized {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+}
