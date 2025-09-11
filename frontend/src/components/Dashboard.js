@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import Footer from './Footer';
+import CreateProjectModal from './CreateProjectModal';
 import { 
   BarChart3, 
   Users, 
@@ -22,6 +23,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [projectsLoading, setProjectsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   // Fetch dashboard stats function
   const fetchDashboardStats = async () => {
@@ -98,6 +100,21 @@ const Dashboard = () => {
 
   // Refresh handler
   const handleRefresh = () => {
+    fetchDashboardStats();
+    fetchProjects();
+  };
+
+  // Modal handlers
+  const handleOpenCreateModal = () => {
+    setIsCreateModalOpen(true);
+  };
+
+  const handleCloseCreateModal = () => {
+    setIsCreateModalOpen(false);
+  };
+
+  const handleProjectCreated = () => {
+    // Refresh both stats and projects after creating a new project
     fetchDashboardStats();
     fetchProjects();
   };
@@ -228,6 +245,7 @@ const Dashboard = () => {
               My Projects
             </h2>
             <motion.button
+              onClick={handleOpenCreateModal}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2 font-medium"
@@ -360,6 +378,7 @@ const Dashboard = () => {
                     Get started by creating your first project and begin managing your tasks efficiently.
                   </p>
                   <motion.button
+                    onClick={handleOpenCreateModal}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     className="px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg hover:shadow-xl font-medium"
@@ -375,6 +394,13 @@ const Dashboard = () => {
         {/* Footer */}
         <Footer />
       </div>
+
+      {/* Create Project Modal */}
+      <CreateProjectModal
+        isOpen={isCreateModalOpen}
+        onClose={handleCloseCreateModal}
+        onProjectCreated={handleProjectCreated}
+      />
     </motion.div>
   );
 };
