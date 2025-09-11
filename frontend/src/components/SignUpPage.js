@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Zap, Check } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +16,11 @@ const SignUpPage = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+
+  const { signup } = useAuth();
+  const { isDarkMode } = useTheme();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -60,6 +67,7 @@ const SignUpPage = () => {
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
     }
+    if (!agreedToTerms) newErrors.terms = 'You must agree to the terms and conditions';
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -68,23 +76,38 @@ const SignUpPage = () => {
     }
 
     try {
-      // TODO: Replace with actual API call
-      console.log('Signing up with:', formData);
+      const result = await signup(formData.name, formData.email, formData.password);
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Handle success (redirect will be handled by auth context later)
-      console.log('Sign up successful');
+      if (result.success) {
+        navigate('/dashboard');
+      } else {
+        // Handle backend validation errors
+        const backendErrors = {};
+        if (result.errors) {
+          result.errors.forEach(error => {
+            if (error.param) {
+              backendErrors[error.param] = error.msg;
+            } else {
+              backendErrors.general = error.msg;
+            }
+          });
+        }
+        setErrors(backendErrors);
+      }
     } catch (error) {
-      setErrors({ general: 'Failed to create account. Please try again.' });
+      console.error('Signup error:', error);
+      setErrors({ general: 'An unexpected error occurred. Please try again.' });
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-900 dark:to-green-900/20 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className={`min-h-screen bg-gradient-to-br transition-colors duration-300 ${
+      isDarkMode 
+        ? 'from-gray-900 via-gray-900 to-green-900/20' 
+        : 'from-green-50 via-white to-green-50'
+    } flex items-center justify-center pt-20 pb-12 px-4 sm:px-6 lg:px-8`}>
       {/* Background Animation */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
@@ -111,33 +134,14 @@ const SignUpPage = () => {
         />
       </div>
 
-      <div className="relative max-w-md w-full space-y-8">
+      <div className="relative max-w-md w-full space-y-6">
         {/* Header */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center"
+          className="text-center mb-8"
         >
-          <motion.div 
-            className="flex items-center justify-center space-x-2 mb-6"
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            <div className="relative">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                className="w-10 h-10 bg-gradient-to-r from-green-400 to-green-600 rounded-lg flex items-center justify-center"
-              >
-                <Zap className="w-5 h-5 text-white" />
-              </motion.div>
-            </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-green-800 dark:from-green-400 dark:to-green-600 bg-clip-text text-transparent">
-              Momentum
-            </span>
-          </motion.div>
-          
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             Create your account
           </h2>
@@ -151,7 +155,7 @@ const SignUpPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 p-8"
+          className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 p-6 sm:p-8"
         >
           <form className="space-y-6" onSubmit={handleSubmit}>
             {errors.general && (
@@ -358,23 +362,41 @@ const SignUpPage = () => {
                   id="terms"
                   name="terms"
                   type="checkbox"
-                  required
-                  className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                  checked={agreedToTerms}
+                  onChange={(e) => setAgreedToTerms(e.target.checked)}
+                  className={`h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded ${
+                    errors.terms ? 'border-red-300' : ''
+                  }`}
                 />
               </div>
               <div className="ml-3 text-sm">
-                <label htmlFor="terms" className="text-gray-700 dark:text-gray-300">
+                <label htmlFor="terms" className={`${
+                  isDarkMode ? 'text-gray-300' : 'text-gray-700'
+                }`}>
                   I agree to the{' '}
-                  <a href="#" className="text-green-600 hover:text-green-500 dark:text-green-400">
+                  <a href="#" className={`${
+                    isDarkMode ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-500'
+                  }`}>
                     Terms of Service
                   </a>{' '}
                   and{' '}
-                  <a href="#" className="text-green-600 hover:text-green-500 dark:text-green-400">
+                  <a href="#" className={`${
+                    isDarkMode ? 'text-green-400 hover:text-green-300' : 'text-green-600 hover:text-green-500'
+                  }`}>
                     Privacy Policy
                   </a>
                 </label>
               </div>
             </div>
+            {errors.terms && (
+              <motion.p
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-1 text-sm text-red-600 dark:text-red-400"
+              >
+                {errors.terms}
+              </motion.p>
+            )}
 
             {/* Submit Button */}
             <motion.button

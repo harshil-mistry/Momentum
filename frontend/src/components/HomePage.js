@@ -28,38 +28,37 @@ const HomePage = () => {
   ];
 
   const stats = [
-    { number: "10K+", label: "Active Users" },
-    { number: "50K+", label: "Projects Completed" },
+    { number: "Unlimited", label: "Projects Supported" },
     { number: "99.9%", label: "Uptime" },
     { number: "24/7", label: "Support" }
   ];
 
   const testimonials = [
     {
-      name: "Sarah Chen",
-      role: "Product Manager",
-      company: "TechCorp",
+      name: "Jay Rathod",
+      role: "CEO",
+      company: "LexiShell",
       content: "Momentum transformed how our team collaborates. The intuitive interface and powerful features make project management a breeze.",
-      avatar: "SC"
+      avatar: "JR"
     },
     {
-      name: "Alex Rodriguez",
+      name: "Dharmil Gadhiya",
       role: "Startup Founder",
-      company: "InnovateLab",
+      company: "CCNA - 2",
       content: "Since switching to Momentum, our productivity has increased by 40%. It's the perfect balance of simplicity and functionality.",
-      avatar: "AR"
+      avatar: "DG"
     },
     {
-      name: "Emily Johnson",
+      name: "Meet Borkhatariya",
       role: "Team Lead",
-      company: "DesignStudio",
+      company: "Google",
       content: "The best project management tool we've ever used. Our clients love the transparency and we love the efficiency.",
-      avatar: "EJ"
+      avatar: "MB"
     }
   ];
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
+    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300 mt-[3rem]">
       {/* Hero Section */}
       <section className="relative pt-20 pb-16 overflow-hidden">
         {/* Background Gradient */}
@@ -140,7 +139,7 @@ const HomePage = () => {
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <span>Start Free Trial</span>
+                  <span>Get Started</span>
                   <motion.div
                     className="group-hover:translate-x-1 transition-transform duration-300"
                   >
@@ -149,14 +148,6 @@ const HomePage = () => {
                 </motion.div>
               </Link>
               
-              <motion.button
-                className="group px-8 py-4 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-semibold rounded-xl hover:border-green-500 dark:hover:border-green-400 hover:text-green-600 dark:hover:text-green-400 transition-all duration-300 flex items-center space-x-2"
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Play className="w-5 h-5" />
-                <span>Watch Demo</span>
-              </motion.button>
             </motion.div>
 
             {/* Stats */}
@@ -164,7 +155,7 @@ const HomePage = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto"
+              className="grid grid-cols-3 md:grid-cols-3 gap-8 max-w-4xl mx-auto"
             >
               {stats.map((stat, index) => (
                 <motion.div
@@ -248,7 +239,7 @@ const HomePage = () => {
             className="text-center mb-16"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Trusted by teams worldwide
+              Trusted by teams Changa-wide
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               See what our users have to say about their experience with Momentum
