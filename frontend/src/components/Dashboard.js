@@ -206,7 +206,7 @@ const Dashboard = () => {
                 key={stat.title}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
+                transition={{ delay: index * 0.1 }} 
                 whileHover={{ scale: 1.02 }}
                 className="p-6 rounded-xl shadow-lg transition-all duration-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:shadow-xl"
               >
