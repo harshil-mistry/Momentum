@@ -234,7 +234,7 @@ const SignInPage = () => {
               )}
             </div>
 
-            {/* Remember Me & Forgot Password */}
+            {/* Remember Me & Forgot Password
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <input
@@ -253,7 +253,7 @@ const SignInPage = () => {
                   Forgot your password?
                 </a>
               </div>
-            </div>
+            </div> */}
 
             {/* Submit Button */}
             <motion.button
@@ -292,7 +292,7 @@ const SignInPage = () => {
         </motion.div>
 
         {/* Footer */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.4 }}
@@ -308,7 +308,7 @@ const SignInPage = () => {
               Privacy Policy
             </a>
           </p>
-        </motion.div>
+        </motion.div> */}
       </div>
     </div>
   );

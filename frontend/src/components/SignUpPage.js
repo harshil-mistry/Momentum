@@ -385,14 +385,7 @@ const SignUpPage = () => {
               </div>
               <div className="ml-3 text-sm">
                 <label htmlFor="terms" className="text-gray-700 dark:text-gray-300">
-                  I agree to the{' '}
-                  <a href="#" className="text-green-600 hover:text-green-500 dark:text-green-400 dark:hover:text-green-300">
-                    Terms of Service
-                  </a>{' '}
-                  and{' '}
-                  <a href="#" className="text-green-600 hover:text-green-500 dark:text-green-400 dark:hover:text-green-300">
-                    Privacy Policy
-                  </a>
+                  I agree to use the ethically !!
                 </label>
               </div>
             </div>

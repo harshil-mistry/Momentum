@@ -86,13 +86,13 @@ const ProjectSidebar = ({ projectId, project }) => {
               <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Progress</span>
             </div>
             <span className="text-xs font-bold text-green-600 dark:text-green-400">
-              {project?.completionPercentage || 75}%
+              {project?.completionPercentage || 0}%
             </span>
           </div>
           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
             <motion.div
               initial={{ width: 0 }}
-              animate={{ width: `${project?.completionPercentage || 75}%` }}
+              animate={{ width: `${project?.completionPercentage || 0}%` }}
               transition={{ duration: 1, delay: 0.5 }}
               className="h-2 bg-gradient-to-r from-green-500 to-green-600 rounded-full"
             ></motion.div>
