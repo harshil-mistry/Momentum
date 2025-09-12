@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { DragDropContext } from '@hello-pangea/dnd';
 import { motion } from 'framer-motion';
 import { Plus } from 'lucide-react';
 import KanbanColumn from './KanbanColumn';
+import './KanbanOptimizations.css';
 
 const KanbanBoard = ({ issues, onUpdateIssueStatus }) => {
-  const handleDragEnd = (result) => {
+  // Memoize the drag end handler to prevent recreation on every render
+  const handleDragEnd = useCallback((result) => {
     const { destination, source, draggableId } = result;
 
     // If dropped outside a droppable area
@@ -30,16 +32,17 @@ const KanbanBoard = ({ issues, onUpdateIssueStatus }) => {
 
     const newStatus = statusMap[destination.droppableId];
     onUpdateIssueStatus(draggableId, newStatus);
-  };
+  }, [onUpdateIssueStatus]);
 
-  // Group issues by status
-  const groupedIssues = {
+  // Memoize grouped issues to prevent re-calculation on every render
+  const groupedIssues = useMemo(() => ({
     todo: issues.filter(issue => issue.status === 0),
     inprogress: issues.filter(issue => issue.status === 1),
     completed: issues.filter(issue => issue.status === 2)
-  };
+  }), [issues]);
 
-  const columns = [
+  // Memoize columns configuration to prevent recreation
+  const columns = useMemo(() => [
     {
       id: 'todo',
       title: 'To Do',
@@ -67,22 +70,22 @@ const KanbanBoard = ({ issues, onUpdateIssueStatus }) => {
       borderColor: 'border-green-200 dark:border-green-800',
       headerColor: 'text-green-600 dark:text-green-400'
     }
-  ];
+  ], [groupedIssues]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.1 }
+      transition: { staggerChildren: 0.05 }
     }
   };
 
   const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { y: 10, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
-      transition: { type: "spring", stiffness: 100 }
+      transition: { type: "spring", stiffness: 150, damping: 15 }
     }
   };
 
@@ -117,12 +120,12 @@ const KanbanBoard = ({ issues, onUpdateIssueStatus }) => {
 
       {/* Kanban Board */}
       <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-full kanban-drag-optimization">
           {columns.map((column, index) => (
             <motion.div
               key={column.id}
               variants={itemVariants}
-              transition={{ delay: index * 0.1 }}
+              transition={{ delay: index * 0.05 }}
             >
               <KanbanColumn column={column} />
             </motion.div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Routes, Route, useParams, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import ProjectSidebar from './ProjectSidebar';
@@ -101,13 +101,13 @@ const ProjectDetail = () => {
   const [notes, setNotes] = useState(staticNotes);
   const [project, setProject] = useState(staticProjectData);
 
-  const updateIssueStatus = (issueId, newStatus) => {
+  const updateIssueStatus = useCallback((issueId, newStatus) => {
     setIssues(prevIssues =>
       prevIssues.map(issue =>
         issue.id === issueId ? { ...issue, status: newStatus } : issue
       )
     );
-  };
+  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
