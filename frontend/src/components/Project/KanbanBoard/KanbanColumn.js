@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Droppable } from '@hello-pangea/dnd';
 import { Plus } from 'lucide-react';
 import IssueCard from './IssueCard';
 
-const KanbanColumn = ({ column }) => {
+const KanbanColumn = memo(({ column }) => {
   return (
     <div className="flex flex-col h-full">
       {/* Column Header */}
@@ -17,7 +17,7 @@ const KanbanColumn = ({ column }) => {
               {column.issues.length}
             </span>
             <button
-              className={`p-1 rounded hover:bg-white/50 dark:hover:bg-gray-800/50 transition-colors duration-200 ${column.headerColor}`}
+              className={`p-1 rounded hover:bg-white/50 dark:hover:bg-gray-800/50 transition-colors duration-150 ${column.headerColor}`}
             >
               <Plus className="h-4 w-4" />
             </button>
@@ -31,7 +31,7 @@ const KanbanColumn = ({ column }) => {
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className={`flex-1 p-4 border-l border-r border-b rounded-b-xl transition-colors duration-200 ${
+            className={`flex-1 p-4 border-l border-r border-b rounded-b-xl transition-colors duration-150 ${
               column.borderColor
             } ${
               snapshot.isDraggingOver
@@ -64,6 +64,8 @@ const KanbanColumn = ({ column }) => {
       </Droppable>
     </div>
   );
-};
+});
+
+KanbanColumn.displayName = 'KanbanColumn';
 
 export default KanbanColumn;

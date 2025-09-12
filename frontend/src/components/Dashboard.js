@@ -50,7 +50,7 @@ const Dashboard = () => {
             value: totalIssues.toString(), 
             icon: AlertTriangle, 
             change: totalIssues > 0 ? `${totalIssues} created` : 'No issues yet', 
-            color: 'from-blue-400 to-blue-400' 
+            color: 'from-blue-400 to-blue-400 ' 
           },
           { 
             title: 'Pending Issues', 

@@ -1,0 +1,84 @@
+/* Kanban Board Optimizations */
+.kanban-drag-optimization {
+  /* Optimize repaints during drag */
+  will-change: transform;
+  /* Optimize rendering */
+  backface-visibility: hidden;
+  /* Smooth transitions */
+  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Optimize drappable areas */
+[data-rbd-droppable-id] {
+  /* Optimize reflows */
+  contain: layout style paint;
+}
+
+/* Optimize draggable items */
+[data-rbd-draggable-id] {
+  /* Optimize for animations */
+  will-change: transform;
+  /* Reduce paint complexity */
+  contain: layout;
+}
+
+/* Reduce motion for better performance during drag */
+[data-rbd-draggable-id]:not([data-rbd-drag-handle-context-id]) {
+  transition: all 0.15s cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Dragging state optimizations */
+[data-rbd-draggable-id][data-rbd-drag-handle-context-id] {
+  /* Disable transitions during drag for better performance */
+  transition: none !important;
+  /* Optimize rendering */
+  will-change: transform;
+  /* Ensure proper cursor positioning */
+  transform: none !important;
+}
+
+/* Reduce box-shadow complexity during drag */
+.dragging-optimized {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Fix drag positioning issues */
+[data-rbd-drag-handle-dragging-id] {
+  transform: none !important;
+  position: relative !important;
+}
+
+/* Ensure drag portal positioning is correct */
+[data-rbd-draggable-id] {
+  position: relative;
+}
+
+/* Reset any conflicting transforms during drag */
+.kanban-drag-optimization [data-rbd-draggable-id][data-rbd-drag-handle-context-id] {
+  transform: none !important;
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+}
+
+/* Ensure the drag portal renders correctly */
+body > div[data-rbd-portal] {
+  z-index: 9999 !important;
+}
+
+body > div[data-rbd-portal] > div {
+  transform: none !important;
+}
+
+/* Complete reset for drag elements */
+[data-rbd-draggable-id][data-rbd-drag-handle-context-id] * {
+  transform: none !important;
+  position: static !important;
+}
+
+/* Specific fix for drag positioning */
+[data-react-beautiful-dnd-draggable] {
+  transform: none !important;
+}
