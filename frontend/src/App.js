@@ -12,6 +12,7 @@ import Dashboard from './components/Dashboard';
 import ProjectDetail from './components/Project/ProjectDetail';
 import ProtectedRoute from './components/ProtectedRoute';
 import NotificationContainer from './components/Notifications/NotificationContainer';
+import NotFoundPage from './components/NotFoundPage';
 
 function App() {
   return (
@@ -35,6 +36,8 @@ function App() {
                     <ProjectDetail />
                   </ProtectedRoute>
                 } />
+                {/* 404 Catch-all route - must be last */}
+                <Route path="*" element={<NotFoundPage />} />
               </Routes>
               <NotificationContainer />
             </div>

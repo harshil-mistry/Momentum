@@ -395,7 +395,7 @@ const SignUpPage = () => {
               </div>
               <div className="ml-3 text-sm">
                 <label htmlFor="terms" className="text-gray-700 dark:text-gray-300">
-                  I agree to use the ethically !!
+                  I agree to use the system responsibly !!
                 </label>
               </div>
             </div>
