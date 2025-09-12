@@ -89,7 +89,7 @@ const IssuesManager = ({ issues, setIssues, onAddIssue }) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: name === 'priority' ? parseInt(value, 10) : value
     }));
   };
 
