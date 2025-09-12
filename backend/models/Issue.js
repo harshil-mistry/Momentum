@@ -25,6 +25,8 @@ const IssueSchema = mongoose.Schema({
         default: 1,
         enum: [0, 1, 2]
     }
+}, {
+    timestamps: true
 })
 
 const Issue = mongoose.model('issues', IssueSchema)

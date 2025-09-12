@@ -2,7 +2,6 @@ import React, { useState, useCallback } from 'react';
 import { Routes, Route, useParams, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import ProjectSidebar from './ProjectSidebar';
-import ProjectHeader from './ProjectHeader';
 import KanbanBoard from './KanbanBoard/KanbanBoard';
 import IssuesManager from './IssuesManager/IssuesManager';
 import NotesManager from './NotesManager/NotesManager';
@@ -126,13 +125,10 @@ const ProjectDetail = () => {
     >
       <div className="flex h-screen pt-16">
         {/* Sidebar */}
-        <ProjectSidebar projectId={projectId} />
+        <ProjectSidebar projectId={projectId} project={project} />
         
         {/* Main Content */}
         <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Project Header */}
-          <ProjectHeader project={project} />
-          
           {/* Content Area */}
           <div className="flex-1 overflow-auto p-6">
             <Routes>

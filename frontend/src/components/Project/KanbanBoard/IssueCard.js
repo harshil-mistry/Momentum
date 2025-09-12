@@ -57,7 +57,7 @@ const IssueCard = memo(({ issue, index }) => {
           className={`p-4 rounded-lg border cursor-grab active:cursor-grabbing ${
             snapshot.isDragging
               ? 'bg-white dark:bg-gray-700 dragging-optimized border-green-300 dark:border-green-700 z-50'
-              : 'bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:shadow-md hover:border-green-300 dark:hover:border-green-700 hover:scale-[1.02] transition-all duration-150'
+              : 'bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 hover:shadow-md hover:border-green-300 dark:hover:border-green-700 transition-all duration-150'
           }`}
         >
           {/* Priority Badge */}
