@@ -38,8 +38,8 @@ const ProjectSettings = ({ project, onUpdateProject }) => {
   const tabs = [
     { id: 'general', name: 'General', icon: Settings },
     { id: 'members', name: 'Members', icon: Users },
-    { id: 'notifications', name: 'Notifications', icon: Bell },
-    { id: 'permissions', name: 'Permissions', icon: Shield },
+    // { id: 'notifications', name: 'Notifications', icon: Bell },
+    // { id: 'permissions', name: 'Permissions', icon: Shield },
     { id: 'danger', name: 'Danger Zone', icon: Trash2 }
   ];
 
@@ -93,7 +93,7 @@ const ProjectSettings = ({ project, onUpdateProject }) => {
         />
       </div>
 
-      <div>
+      {/* <div>
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Visibility
         </label>
@@ -133,7 +133,7 @@ const ProjectSettings = ({ project, onUpdateProject }) => {
             </div>
           </label>
         </div>
-      </div>
+      </div> */}
     </motion.div>
   );
 
@@ -299,7 +299,7 @@ const ProjectSettings = ({ project, onUpdateProject }) => {
         <h3 className="text-lg font-medium text-red-900 dark:text-red-400 mb-4">Danger Zone</h3>
         
         <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg border border-red-200 dark:border-red-700">
+          {/* <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg border border-red-200 dark:border-red-700">
             <div>
               <div className="text-sm font-medium text-gray-900 dark:text-white">Export Project Data</div>
               <div className="text-xs text-gray-500 dark:text-gray-400">Download all project data as JSON</div>
@@ -312,9 +312,9 @@ const ProjectSettings = ({ project, onUpdateProject }) => {
               <Download className="h-4 w-4" />
               <span>Export</span>
             </motion.button>
-          </div>
+          </div> */}
 
-          <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg border border-red-200 dark:border-red-700">
+          {/* <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg border border-red-200 dark:border-red-700">
             <div>
               <div className="text-sm font-medium text-red-900 dark:text-red-400">Archive Project</div>
               <div className="text-xs text-gray-500 dark:text-gray-400">Make project read-only</div>
@@ -326,7 +326,7 @@ const ProjectSettings = ({ project, onUpdateProject }) => {
             >
               Archive
             </motion.button>
-          </div>
+          </div> */}
 
           <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg border border-red-200 dark:border-red-700">
             <div>
