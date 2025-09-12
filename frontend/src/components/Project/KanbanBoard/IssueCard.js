@@ -48,7 +48,7 @@ const IssueCard = memo(({ issue, index }) => {
   const PriorityIcon = priorityConfig.icon;
 
   return (
-    <Draggable draggableId={issue.id} index={index}>
+    <Draggable draggableId={issue._id || issue.id} index={index}>
       {(provided, snapshot) => (
         <div
           ref={provided.innerRef}
@@ -89,7 +89,7 @@ const IssueCard = memo(({ issue, index }) => {
             
             {/* Issue ID */}
             <span className="font-mono text-xs bg-gray-100 dark:bg-gray-600 px-2 py-1 rounded">
-              #{issue.id}
+              #{issue._id?.slice(-6) || issue.id}
             </span>
           </div>
         </div>
