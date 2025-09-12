@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Zap, Check } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useNotification } from '../contexts/NotificationContext';
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
@@ -18,6 +19,7 @@ const SignUpPage = () => {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const { signup, isAuthenticated, loading } = useAuth();
+  const { showSuccess, showError } = useNotification();
   const navigate = useNavigate();
 
   // Redirect if user is already authenticated
@@ -84,24 +86,32 @@ const SignUpPage = () => {
       const result = await signup(formData.name, formData.email, formData.password);
       
       if (result.success) {
+        showSuccess('Account created successfully! Welcome to Momentum.');
         navigate('/dashboard');
       } else {
         // Handle backend validation errors
         const backendErrors = {};
+        let errorMessage = 'Registration failed';
+        
         if (result.errors) {
           result.errors.forEach(error => {
             if (error.param) {
               backendErrors[error.param] = error.msg;
             } else {
               backendErrors.general = error.msg;
+              errorMessage = error.msg;
             }
           });
         }
+        
         setErrors(backendErrors);
+        showError(errorMessage);
       }
     } catch (error) {
       console.error('Signup error:', error);
-      setErrors({ general: 'An unexpected error occurred. Please try again.' });
+      const errorMsg = 'An unexpected error occurred. Please try again.';
+      setErrors({ general: errorMsg });
+      showError(errorMsg);
     } finally {
       setIsLoading(false);
     }

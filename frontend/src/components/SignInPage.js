@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Zap } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useNotification } from '../contexts/NotificationContext';
 
 const SignInPage = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +15,7 @@ const SignInPage = () => {
   const [errors, setErrors] = useState({});
 
   const { login, isAuthenticated, loading } = useAuth();
+  const { showSuccess, showError } = useNotification();
   const navigate = useNavigate();
 
   // Redirect if user is already authenticated
@@ -57,24 +59,32 @@ const SignInPage = () => {
       const result = await login(formData.email, formData.password);
       
       if (result.success) {
+        showSuccess('Welcome back! Login successful.');
         navigate('/dashboard');
       } else {
         // Handle backend validation errors
         const backendErrors = {};
+        let errorMessage = 'Login failed';
+        
         if (result.errors) {
           result.errors.forEach(error => {
             if (error.param) {
               backendErrors[error.param] = error.msg;
             } else {
               backendErrors.general = error.msg;
+              errorMessage = error.msg;
             }
           });
         }
+        
         setErrors(backendErrors);
+        showError(errorMessage);
       }
     } catch (error) {
       console.error('Login error:', error);
-      setErrors({ general: 'An unexpected error occurred. Please try again.' });
+      const errorMsg = 'An unexpected error occurred. Please try again.';
+      setErrors({ general: errorMsg });
+      showError(errorMsg);
     } finally {
       setIsLoading(false);
     }

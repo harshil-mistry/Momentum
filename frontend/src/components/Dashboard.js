@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Footer from './Footer';
 import CreateProjectModal from './CreateProjectModal';
+import { useNotification } from '../contexts/NotificationContext';
 import { 
   BarChart3, 
   Users, 
@@ -21,6 +22,7 @@ import {
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const { showSuccess, showError, showApiResponse, showApiError } = useNotification();
   const navigate = useNavigate();
   const [stats, setStats] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -142,18 +144,14 @@ const Dashboard = () => {
         }
       });
 
-      if (response.data.status === 'success') {
-        // Refresh both stats and projects after deletion
-        fetchDashboardStats();
-        fetchProjects();
-        alert('Project deleted successfully');
-      } else {
-        alert('Failed to delete project. Please try again.');
-      }
+      showApiResponse(response, `Project "${projectName}" deleted successfully`);
+      
+      // Refresh both stats and projects after deletion
+      fetchDashboardStats();
+      fetchProjects();
     } catch (error) {
       console.error('Error deleting project:', error);
-      const errorMessage = error.response?.data?.errors?.[0]?.msg || 'Failed to delete project. Please try again.';
-      alert(errorMessage);
+      showApiError(error, 'Failed to delete project. Please try again.');
     }
   };
 

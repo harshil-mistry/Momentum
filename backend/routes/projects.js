@@ -84,7 +84,7 @@ router.get('/', auth, async (req, res, next) => {
 //Route to add a new Project
 router.post('/', [auth, [
     body('name', 'Please enter a name').notEmpty(),
-    body('deadline', 'Deadline must be a valid date').if(body('deadline').exists()).isISO8601()
+    body('deadline', 'Deadline must be a valid date').if(body('deadline').exists().notEmpty()).isISO8601()
 ]], async (req, res, next) => {
 
     //Performing data validation
@@ -196,7 +196,7 @@ router.get('/:id', auth, async (req, res, next) => {
 //updating project details
 router.put('/:id', [auth, [
     body('name', 'Please enter a name').notEmpty(),
-    body('deadline', 'Deadline must be a valid date').if(body('deadline').exists()).isISO8601()
+    body('deadline', 'Deadline must be a valid date').if(body('deadline').exists().notEmpty()).isISO8601()
 ]], async (req, res) => {
 
     //Performing data validation

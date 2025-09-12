@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Plus, Loader, Calendar } from 'lucide-react';
 import axios from 'axios';
+import { useNotification } from '../contexts/NotificationContext';
 
 const CreateProjectModal = ({ isOpen, onClose, onProjectCreated }) => {
+  const { showSuccess, showApiResponse, showApiError } = useNotification();
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -32,16 +34,17 @@ const CreateProjectModal = ({ isOpen, onClose, onProjectCreated }) => {
     try {
       const response = await axios.post('/project', formData);
       
-      if (response.data.status === 'success') {
-        // Reset form
-        setFormData({ name: '', description: '', deadline: '' });
-        // Notify parent component to refresh projects
-        onProjectCreated();
-        // Close modal
-        onClose();
-      }
+      showApiResponse(response, `Project "${formData.name}" created successfully!`);
+      
+      // Reset form
+      setFormData({ name: '', description: '', deadline: '' });
+      // Notify parent component to refresh projects
+      onProjectCreated();
+      // Close modal
+      onClose();
     } catch (error) {
       console.error('Error creating project:', error);
+      showApiError(error, 'Failed to create project. Please try again.');
       if (error.response?.data?.errors) {
         setErrors(error.response.data.errors);
       } else {
@@ -185,7 +188,6 @@ const CreateProjectModal = ({ isOpen, onClose, onProjectCreated }) => {
                     value={formData.deadline}
                     onChange={handleInputChange}
                     disabled={isLoading}
-                    min={new Date().toISOString().split('T')[0]} // Prevent selecting past dates
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 disabled:opacity-50"
                   />
                   <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">

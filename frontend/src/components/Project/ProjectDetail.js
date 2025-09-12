@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Routes, Route, useParams, Navigate } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import { useNotification } from '../../contexts/NotificationContext';
 import ProjectSidebar from './ProjectSidebar';
 import KanbanBoard from './KanbanBoard/KanbanBoard';
 import IssuesManager from './IssuesManager/IssuesManager';
@@ -75,6 +76,7 @@ const staticIssues = [
 
 const ProjectDetail = () => {
   const { projectId } = useParams();
+  const { showApiResponse, showApiError } = useNotification();
   const [issues, setIssues] = useState([]);
   const [notes, setNotes] = useState([]);
   const [project, setProject] = useState(null);
@@ -172,6 +174,7 @@ const ProjectDetail = () => {
         }
       );
 
+      // Silently update status - no notification needed for drag & drop
       console.log('Issue status updated successfully:', response.data);
       
       // Optionally refresh issues to ensure sync with backend
@@ -179,6 +182,7 @@ const ProjectDetail = () => {
       
     } catch (err) {
       console.error('Failed to update issue status:', err);
+      showApiError(err, 'Failed to update issue status. Please try again.');
       
       // Revert the optimistic update if API call fails
       setIssues(prevIssues =>
@@ -189,9 +193,6 @@ const ProjectDetail = () => {
           } : issue
         )
       );
-
-      // Show error message (you can replace this with a proper toast notification)
-      alert('Failed to update issue status. Please try again.');
     }
   }, []);
 
@@ -209,7 +210,7 @@ const ProjectDetail = () => {
         }
       );
 
-      console.log('Issue created successfully:', response.data);
+      showApiResponse(response, `Issue "${issueData.name}" created successfully!`);
       
       // Refresh issues to get the new issue from backend
       await fetchIssues();
@@ -218,6 +219,7 @@ const ProjectDetail = () => {
       
     } catch (err) {
       console.error('Failed to create issue:', err);
+      showApiError(err, 'Failed to create issue. Please try again.');
       
       const errorMessage = err.response?.data?.errors?.[0]?.msg || 'Failed to create issue. Please try again.';
       return { success: false, message: errorMessage };
@@ -238,7 +240,7 @@ const ProjectDetail = () => {
         }
       );
 
-      console.log('Note created successfully:', response.data);
+      showApiResponse(response, `Note "${noteData.name}" created successfully!`);
       
       // Refresh notes to get the new note from backend
       await fetchNotes();
@@ -247,6 +249,7 @@ const ProjectDetail = () => {
       
     } catch (err) {
       console.error('Failed to create note:', err);
+      showApiError(err, 'Failed to create note. Please try again.');
       
       const errorMessage = err.response?.data?.errors?.[0]?.msg || 'Failed to create note. Please try again.';
       return { success: false, message: errorMessage };
@@ -266,7 +269,7 @@ const ProjectDetail = () => {
         }
       );
 
-      console.log('Note updated successfully:', response.data);
+      showApiResponse(response, 'Note updated successfully!');
       
       // Refresh notes to get the updated note from backend
       await fetchNotes();
@@ -275,6 +278,7 @@ const ProjectDetail = () => {
       
     } catch (err) {
       console.error('Failed to update note:', err);
+      showApiError(err, 'Failed to update note. Please try again.');
       
       const errorMessage = err.response?.data?.errors?.[0]?.msg || 'Failed to update note. Please try again.';
       return { success: false, message: errorMessage };
@@ -290,7 +294,7 @@ const ProjectDetail = () => {
         }
       });
 
-      console.log('Note deleted successfully');
+      showApiResponse({ data: { status: 'success' } }, 'Note deleted successfully!');
       
       // Refresh notes to remove the deleted note from frontend
       await fetchNotes();
@@ -299,6 +303,7 @@ const ProjectDetail = () => {
       
     } catch (err) {
       console.error('Failed to delete note:', err);
+      showApiError(err, 'Failed to delete note. Please try again.');
       
       const errorMessage = err.response?.data?.errors?.[0]?.msg || 'Failed to delete note. Please try again.';
       return { success: false, message: errorMessage };
@@ -319,7 +324,7 @@ const ProjectDetail = () => {
         }
       );
 
-      console.log('Project updated successfully:', response.data);
+      showApiResponse(response, 'Project updated successfully!');
       
       // Update the project state with the updated data
       setProject(response.data);
@@ -328,11 +333,12 @@ const ProjectDetail = () => {
       
     } catch (err) {
       console.error('Failed to update project:', err);
+      showApiError(err, 'Failed to update project. Please try again.');
       
       const errorMessage = err.response?.data?.errors?.[0]?.msg || 'Failed to update project. Please try again.';
       return { success: false, message: errorMessage };
     }
-  }, []);
+  }, [showApiResponse, showApiError]);
 
   // Delete project function
   const deleteProject = useCallback(async (projectId) => {
@@ -344,17 +350,18 @@ const ProjectDetail = () => {
         }
       });
 
-      console.log('Project deleted successfully:', response.data);
+      showApiResponse(response, 'Project deleted successfully!');
       
       return { success: true, message: 'Project deleted successfully', data: response.data };
       
     } catch (err) {
       console.error('Failed to delete project:', err);
+      showApiError(err, 'Failed to delete project. Please try again.');
       
       const errorMessage = err.response?.data?.errors?.[0]?.msg || 'Failed to delete project. Please try again.';
       return { success: false, message: errorMessage };
     }
-  }, []);
+  }, [showApiResponse, showApiError]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
