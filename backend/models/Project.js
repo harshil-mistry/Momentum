@@ -30,21 +30,36 @@ ProjectSchema.methods.isOverdue = function() {
 
 // Method to get days until deadline
 ProjectSchema.methods.getDaysUntilDeadline = function() {
-    if (!this.deadline) return null;
+    // Check if deadline exists and is a valid date
+    if (!this.deadline || this.deadline === null || this.deadline === undefined) {
+        return null;
+    }
+    
+    // Handle string deadlines or invalid dates
+    let deadlineDate;
+    try {
+        deadlineDate = new Date(this.deadline);
+        if (isNaN(deadlineDate.getTime())) {
+            console.error('Invalid deadline date for project:', this.name, this.deadline);
+            return null;
+        }
+    } catch (error) {
+        console.error('Error parsing deadline for project:', this.name, error);
+        return null;
+    }
     
     try {
         const today = new Date();
         today.setHours(0, 0, 0, 0); // Reset time to start of day for accurate comparison
         
-        const deadline = new Date(this.deadline);
-        deadline.setHours(0, 0, 0, 0); // Reset time to start of day for accurate comparison
+        deadlineDate.setHours(0, 0, 0, 0); // Reset time to start of day for accurate comparison
         
-        const timeDiff = deadline.getTime() - today.getTime();
+        const timeDiff = deadlineDate.getTime() - today.getTime();
         const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
         
         return daysDiff;
     } catch (error) {
-        console.error('Error calculating days until deadline:', error);
+        console.error('Error calculating days until deadline for project:', this.name, error);
         return null;
     }
 };

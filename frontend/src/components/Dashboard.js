@@ -392,38 +392,14 @@ const Dashboard = () => {
                       {/* Deadline Information */}
                       {project.deadline && (
                         <div className="mb-3 pb-3 border-b border-gray-200 dark:border-gray-700">
-                          <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                            project.deadlineStatus === 'overdue' 
-                              ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400'
-                              : project.deadlineStatus === 'due-today'
-                              ? 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-400'
-                              : project.deadlineStatus === 'due-soon'
-                              ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400'
-                              : 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400'
-                          }`}>
+                          <div className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400">
                             <Clock className="h-3 w-3 mr-1" />
-                            {(() => {
-                              // Handle undefined/null daysUntilDeadline
-                              if (project.daysUntilDeadline === undefined || project.daysUntilDeadline === null) {
-                                return 'Calculating...';
-                              }
-                              
-                              if (project.isOverdue || project.daysUntilDeadline < 0) {
-                                return `Overdue by ${Math.abs(project.daysUntilDeadline)} days`;
-                              } else if (project.daysUntilDeadline === 0) {
-                                return 'Due today';
-                              } else {
-                                return `${project.daysUntilDeadline} days left`;
-                              }
-                            })()}
-                          </div>
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                             Due: {new Date(project.deadline).toLocaleDateString('en-US', { 
                               month: 'short', 
                               day: 'numeric',
                               year: 'numeric'
                             })}
-                          </p>
+                          </div>
                         </div>
                       )}
 

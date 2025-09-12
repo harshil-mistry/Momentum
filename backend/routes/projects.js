@@ -42,6 +42,15 @@ router.get('/', auth, async (req, res, next) => {
                 const isOverdue = proj.isOverdue()
                 const deadlineStatus = proj.getDeadlineStatus()
                 
+                // Debug only if we have a deadline but still getting null
+                if (proj.deadline && daysUntilDeadline === null) {
+                    console.log('WARNING: Project has deadline but getDaysUntilDeadline returned null:', {
+                        project: proj.name,
+                        deadline: proj.deadline,
+                        deadlineType: typeof proj.deadline
+                    });
+                }
+                
                 // Ensure daysUntilDeadline is properly handled for serialization
                 const safeProject = {
                     ...projectObj,
@@ -103,7 +112,9 @@ router.post('/', [auth, [
         owner: req.user
     }
     if (description) project_data.description = description
-    if (deadline) project_data.deadline = new Date(deadline)
+    if (deadline && deadline.trim() !== '') {
+        project_data.deadline = new Date(deadline)
+    }
 
     const new_project = await new project(project_data)
 
@@ -159,6 +170,15 @@ router.get('/:id', auth, async (req, res, next) => {
         const daysUntilDeadline = data.getDaysUntilDeadline()
         const isOverdue = data.isOverdue()
         const deadlineStatus = data.getDeadlineStatus()
+        
+        // Debug only if we have a deadline but still getting null
+        if (data.deadline && daysUntilDeadline === null) {
+            console.log('WARNING: Single project has deadline but getDaysUntilDeadline returned null:', {
+                project: data.name,
+                deadline: data.deadline,
+                deadlineType: typeof data.deadline
+            });
+        }
 
         // Debug logging for single project with deadline
         if (data.deadline) {
@@ -244,7 +264,7 @@ router.put('/:id', [auth, [
     
     // Handle deadline field
     if (deadline !== undefined) {
-        if (deadline === null || deadline === '') {
+        if (deadline === null || deadline === '' || deadline.trim() === '') {
             project_data.deadline = null
         } else {
             project_data.deadline = new Date(deadline)
@@ -281,6 +301,15 @@ router.put('/:id', [auth, [
         const daysUntilDeadline = updated_project.getDaysUntilDeadline()
         const isOverdue = updated_project.isOverdue()
         const deadlineStatus = updated_project.getDeadlineStatus()
+        
+        // Debug only if we have a deadline but still getting null
+        if (updated_project.deadline && daysUntilDeadline === null) {
+            console.log('WARNING: Updated project has deadline but getDaysUntilDeadline returned null:', {
+                project: updated_project.name,
+                deadline: updated_project.deadline,
+                deadlineType: typeof updated_project.deadline
+            });
+        }
 
         const projectWithCompletion = {
             ...updated_project.toObject(),
