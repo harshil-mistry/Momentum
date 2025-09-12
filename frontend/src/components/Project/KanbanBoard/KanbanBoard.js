@@ -1,7 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
 import { DragDropContext } from '@hello-pangea/dnd';
 import { motion } from 'framer-motion';
-import { Plus } from 'lucide-react';
 import KanbanColumn from './KanbanColumn';
 import './KanbanOptimizations.css';
 
@@ -98,23 +97,13 @@ const KanbanBoard = ({ issues, onUpdateIssueStatus }) => {
     >
       {/* Header */}
       <motion.div variants={itemVariants} className="mb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Kanban Board
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
-              Drag and drop issues between columns to update their status
-            </p>
-          </div>
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2"
-          >
-            <Plus className="h-4 w-4" />
-            <span>Add Issue</span>
-          </motion.button>
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Kanban Board
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">
+            Drag and drop issues between columns to update their status
+          </p>
         </div>
       </motion.div>
 

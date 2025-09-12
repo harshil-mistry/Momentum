@@ -43,12 +43,13 @@ router.post('/:project_id', [auth, [
             })
         }
 
-        const { name, description } = req.body
+        const { name, description, priority } = req.body
 
         //Add issue
         const Issue_data = issue({
             name,
-            project: project_id
+            project: project_id,
+            priority
         })
         if (description) Issue_data.description = description
 
