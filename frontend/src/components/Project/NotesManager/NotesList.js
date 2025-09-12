@@ -2,19 +2,19 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import NoteCard from './NoteCard';
 
-const NotesList = ({ notes, setNotes, viewMode }) => {
+const NotesList = ({ notes, onUpdateNote, onDeleteNote, onCreateNote, viewMode }) => {
   const [selectedNote, setSelectedNote] = useState(null);
 
-  const handleUpdateNote = (noteId, updatedNote) => {
-    setNotes(prevNotes =>
-      prevNotes.map(note =>
-        note.id === noteId ? { ...note, ...updatedNote, updatedAt: new Date().toISOString() } : note
-      )
-    );
+  const handleUpdateNote = async (noteId, updatedNote) => {
+    if (onUpdateNote) {
+      await onUpdateNote(noteId, updatedNote);
+    }
   };
 
-  const handleDeleteNote = (noteId) => {
-    setNotes(prevNotes => prevNotes.filter(note => note.id !== noteId));
+  const handleDeleteNote = async (noteId) => {
+    if (onDeleteNote) {
+      await onDeleteNote(noteId);
+    }
   };
 
   const containerVariants = {
@@ -57,6 +57,7 @@ const NotesList = ({ notes, setNotes, viewMode }) => {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
+            onClick={onCreateNote}
             className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg hover:shadow-xl"
           >
             Create First Note

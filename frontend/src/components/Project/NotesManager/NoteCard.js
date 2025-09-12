@@ -13,27 +13,27 @@ import {
 
 const NoteCard = ({ note, onUpdate, onDelete, viewMode }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editedTitle, setEditedTitle] = useState(note.title);
-  const [editedContent, setEditedContent] = useState(note.content);
+  const [editedTitle, setEditedTitle] = useState(note.name || note.title || '');
+  const [editedContent, setEditedContent] = useState(note.content || '');
   const [showActions, setShowActions] = useState(false);
 
   const handleSave = () => {
-    onUpdate(note.id, {
-      title: editedTitle,
+    onUpdate(note._id || note.id, {
+      name: editedTitle,
       content: editedContent
     });
     setIsEditing(false);
   };
 
   const handleCancel = () => {
-    setEditedTitle(note.title);
-    setEditedContent(note.content);
+    setEditedTitle(note.name || note.title || '');
+    setEditedContent(note.content || '');
     setIsEditing(false);
   };
 
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this note?')) {
-      onDelete(note.id);
+      onDelete(note._id || note.id);
     }
   };
 
@@ -113,14 +113,55 @@ const NoteCard = ({ note, onUpdate, onDelete, viewMode }) => {
               </div>
             ) : (
               <>
-                <div className="flex items-center space-x-3 mb-2">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    {note.title}
-                  </h3>
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(note.category)}`}>
-                    {note.category}
-                  </span>
+                {/* Title and More Options in same line */}
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex-1 mr-3">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                      {note.name || note.title}
+                    </h3>
+                    {note.category && (
+                      <span className={`inline-block mt-1 px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(note.category)}`}>
+                        {note.category}
+                      </span>
+                    )}
+                  </div>
+                  
+                  <div className="relative flex-shrink-0">
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => setShowActions(!showActions)}
+                      className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <MoreVertical className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                    </motion.button>
+
+                    {showActions && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-10 min-w-[120px]"
+                      >
+                        <button
+                          onClick={() => setIsEditing(true)}
+                          className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
+                        >
+                          <Edit3 className="h-4 w-4" />
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          onClick={handleDelete}
+                          className="w-full px-3 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center space-x-2"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          <span>Delete</span>
+                        </button>
+                      </motion.div>
+                    )}
+                  </div>
                 </div>
+
                 <p className="text-gray-700 dark:text-gray-300 line-clamp-2">
                   {note.content}
                 </p>
@@ -137,43 +178,6 @@ const NoteCard = ({ note, onUpdate, onDelete, viewMode }) => {
               </>
             )}
           </div>
-
-          {!isEditing && (
-            <div className="relative">
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => setShowActions(!showActions)}
-                className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              >
-                <MoreVertical className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-              </motion.button>
-
-              {showActions && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-10 min-w-[120px]"
-                >
-                  <button
-                    onClick={() => setIsEditing(true)}
-                    className="w-full px-3 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
-                  >
-                    <Edit3 className="h-4 w-4" />
-                    <span>Edit</span>
-                  </button>
-                  <button
-                    onClick={handleDelete}
-                    className="w-full px-3 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center space-x-2"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    <span>Delete</span>
-                  </button>
-                </motion.div>
-              )}
-            </div>
-          )}
         </div>
       </motion.div>
     );
@@ -224,15 +228,23 @@ const NoteCard = ({ note, onUpdate, onDelete, viewMode }) => {
         </div>
       ) : (
         <>
-          <div className="flex items-start justify-between mb-3">
-            <div className="flex items-center space-x-2">
+          {/* Category Badge */}
+          {note.category && (
+            <div className="mb-3">
               <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(note.category)}`}>
                 <Tag className="h-3 w-3 inline mr-1" />
                 {note.category}
               </span>
             </div>
+          )}
+
+          {/* Title and More Options in same line */}
+          <div className="flex items-start justify-between mb-2">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-2 flex-1 mr-2">
+              {note.name || note.title}
+            </h3>
             
-            <div className="relative">
+            <div className="relative flex-shrink-0">
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
@@ -267,10 +279,6 @@ const NoteCard = ({ note, onUpdate, onDelete, viewMode }) => {
               )}
             </div>
           </div>
-
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
-            {note.title}
-          </h3>
           
           <p className="text-gray-700 dark:text-gray-300 text-sm line-clamp-4 mb-4">
             {note.content}

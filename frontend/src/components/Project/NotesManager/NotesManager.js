@@ -2,15 +2,22 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Search, Grid, List } from 'lucide-react';
 import NotesList from './NotesList';
+import CreateNoteModal from './CreateNoteModal';
 
-const NotesManager = ({ notes, setNotes }) => {
+const NotesManager = ({ notes, onAddNote, onUpdateNote, onDeleteNote }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
+  const [showCreateModal, setShowCreateModal] = useState(false);
+
+  const handleCreateNote = () => {
+    console.log('Create note button clicked, opening modal...');
+    setShowCreateModal(true);
+  };
 
   // Filter notes based on search
   const filteredNotes = notes.filter(note => 
-    note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    note.content.toLowerCase().includes(searchTerm.toLowerCase())
+    (note.name && note.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (note.content && note.content.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   const containerVariants = {
@@ -51,6 +58,7 @@ const NotesManager = ({ notes, setNotes }) => {
           <motion.button
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
+            onClick={handleCreateNote}
             className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center space-x-2"
           >
             <Plus className="h-4 w-4" />
@@ -106,7 +114,9 @@ const NotesManager = ({ notes, setNotes }) => {
       <motion.div variants={itemVariants}>
         <NotesList 
           notes={filteredNotes} 
-          setNotes={setNotes} 
+          onUpdateNote={onUpdateNote}
+          onDeleteNote={onDeleteNote}
+          onCreateNote={handleCreateNote}
           viewMode={viewMode}
         />
       </motion.div>
@@ -134,7 +144,7 @@ const NotesManager = ({ notes, setNotes }) => {
               <div className="text-sm text-gray-600 dark:text-gray-400">
                 Last updated: {
                   notes.length > 0 
-                    ? new Date(Math.max(...notes.map(n => new Date(n.updatedAt)))).toLocaleDateString()
+                    ? new Date(Math.max(...notes.map(n => new Date(n.updatedAt || n.createdAt)))).toLocaleDateString()
                     : 'Never'
                 }
               </div>
@@ -142,6 +152,13 @@ const NotesManager = ({ notes, setNotes }) => {
           </div>
         </div>
       </motion.div>
+
+      {/* Create Note Modal */}
+      <CreateNoteModal 
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onAddNote={onAddNote}
+      />
     </motion.div>
   );
 };

@@ -71,34 +71,12 @@ const staticIssues = [
   }
 ];
 
-const staticNotes = [
-  {
-    id: '1',
-    title: 'Design Guidelines',
-    content: 'Use primary color: #10B981 (Green)\nSecondary colors: Blues and grays\nFont: Inter or similar modern sans-serif',
-    createdAt: '2025-08-16T00:00:00.000Z',
-    updatedAt: '2025-08-20T00:00:00.000Z'
-  },
-  {
-    id: '2',
-    title: 'Meeting Notes - Aug 18',
-    content: 'Client feedback:\n- Wants darker header\n- Add testimonials section\n- Include pricing table\n- Mobile-first approach',
-    createdAt: '2025-08-18T00:00:00.000Z',
-    updatedAt: '2025-08-18T00:00:00.000Z'
-  },
-  {
-    id: '3',
-    title: 'Technical Requirements',
-    content: 'Framework: React.js\nStyling: Tailwind CSS\nAnimations: Framer Motion\nHosting: Vercel\nCMS: Contentful (optional)',
-    createdAt: '2025-08-17T00:00:00.000Z',
-    updatedAt: '2025-08-19T00:00:00.000Z'
-  }
-];
+
 
 const ProjectDetail = () => {
   const { projectId } = useParams();
   const [issues, setIssues] = useState([]);
-  const [notes, setNotes] = useState(staticNotes);
+  const [notes, setNotes] = useState([]);
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -135,12 +113,28 @@ const ProjectDetail = () => {
     }
   }, [projectId]);
 
+  // Fetch project notes
+  const fetchNotes = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`/note/${projectId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      setNotes(response.data.notes || []);
+    } catch (err) {
+      console.error('Error fetching notes:', err);
+      setError('Failed to fetch notes');
+    }
+  }, [projectId]);
+
   // Load data on component mount
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
       try {
-        await Promise.all([fetchProject(), fetchIssues()]);
+        await Promise.all([fetchProject(), fetchIssues(), fetchNotes()]);
       } finally {
         setLoading(false);
       }
@@ -230,6 +224,87 @@ const ProjectDetail = () => {
     }
   }, [projectId, fetchIssues]);
 
+  // Notes CRUD functions
+  const addNote = useCallback(async (noteData) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(`/note/${projectId}`, 
+        noteData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      console.log('Note created successfully:', response.data);
+      
+      // Refresh notes to get the new note from backend
+      await fetchNotes();
+      
+      return { success: true, message: 'Note created successfully' };
+      
+    } catch (err) {
+      console.error('Failed to create note:', err);
+      
+      const errorMessage = err.response?.data?.errors?.[0]?.msg || 'Failed to create note. Please try again.';
+      return { success: false, message: errorMessage };
+    }
+  }, [projectId, fetchNotes]);
+
+  const updateNote = useCallback(async (noteId, noteData) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.put(`/note/${noteId}`, 
+        noteData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      console.log('Note updated successfully:', response.data);
+      
+      // Refresh notes to get the updated note from backend
+      await fetchNotes();
+      
+      return { success: true, message: 'Note updated successfully' };
+      
+    } catch (err) {
+      console.error('Failed to update note:', err);
+      
+      const errorMessage = err.response?.data?.errors?.[0]?.msg || 'Failed to update note. Please try again.';
+      return { success: false, message: errorMessage };
+    }
+  }, [fetchNotes]);
+
+  const deleteNote = useCallback(async (noteId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`/note/${noteId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      console.log('Note deleted successfully');
+      
+      // Refresh notes to remove the deleted note from frontend
+      await fetchNotes();
+      
+      return { success: true, message: 'Note deleted successfully' };
+      
+    } catch (err) {
+      console.error('Failed to delete note:', err);
+      
+      const errorMessage = err.response?.data?.errors?.[0]?.msg || 'Failed to delete note. Please try again.';
+      return { success: false, message: errorMessage };
+    }
+  }, [fetchNotes]);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -312,7 +387,9 @@ const ProjectDetail = () => {
                 element={
                   <NotesManager 
                     notes={notes} 
-                    setNotes={setNotes}
+                    onAddNote={addNote}
+                    onUpdateNote={updateNote}
+                    onDeleteNote={deleteNote}
                   />
                 } 
               />
