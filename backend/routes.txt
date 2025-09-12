@@ -22,7 +22,7 @@ Delete an issue -> api/issue/_id -> delete
 Fetch all issues of a project -> api/issue/project_id -> get
 Change status of the issue -> api/issue/_id -> patch (To be called from the kanban board)
 
-Add new note -> api/notes/project_id -> post
-Fetch all notes -> api/notes/project_id -> get
-Update note -> api/notes/_id -> put
-Delete note -> api/notes/_id -> delete
+Add new note -> api/note/project_id -> post
+Fetch all notes -> api/note/project_id -> get
+Update note -> api/note/_id -> put
+Delete note -> api/note/_id -> delete

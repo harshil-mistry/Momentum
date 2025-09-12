@@ -73,7 +73,7 @@ const ProjectSidebar = ({ projectId, project }) => {
               {project?.name || 'Website Redesign'}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
-              {project?.description || 'Complete overhaul of the company website with modern design'}
+              {project?.description || ''}
             </p>
           </div>
         </div>
