@@ -43,21 +43,21 @@ const Dashboard = () => {
             value: totalProjects.toString(), 
             icon: BarChart3, 
             change: totalProjects > 0 ? `${totalProjects} active` : 'No projects yet', 
-            color: 'from-green-400 to-green-600' 
+            color: 'from-green-400 to-green-400' 
           },
           { 
             title: 'Total Issues', 
             value: totalIssues.toString(), 
             icon: AlertTriangle, 
             change: totalIssues > 0 ? `${totalIssues} created` : 'No issues yet', 
-            color: 'from-blue-400 to-blue-600' 
+            color: 'from-blue-400 to-blue-400' 
           },
           { 
             title: 'Pending Issues', 
             value: pendingIssues.toString(), 
             icon: Clock, 
             change: pendingIssues > 0 ? `${pendingIssues} to resolve` : 'All caught up!', 
-            color: 'from-orange-400 to-orange-600' 
+            color: 'from-orange-400 to-orange-400' 
           }
         ];
         
