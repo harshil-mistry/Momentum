@@ -31,11 +31,22 @@ ProjectSchema.methods.isOverdue = function() {
 // Method to get days until deadline
 ProjectSchema.methods.getDaysUntilDeadline = function() {
     if (!this.deadline) return null;
-    const today = new Date();
-    const deadline = new Date(this.deadline);
-    const timeDiff = deadline.getTime() - today.getTime();
-    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
-    return daysDiff;
+    
+    try {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Reset time to start of day for accurate comparison
+        
+        const deadline = new Date(this.deadline);
+        deadline.setHours(0, 0, 0, 0); // Reset time to start of day for accurate comparison
+        
+        const timeDiff = deadline.getTime() - today.getTime();
+        const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+        
+        return daysDiff;
+    } catch (error) {
+        console.error('Error calculating days until deadline:', error);
+        return null;
+    }
 };
 
 // Method to get deadline status

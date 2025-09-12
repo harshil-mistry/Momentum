@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
   Settings, 
@@ -17,8 +18,11 @@ import {
   Upload
 } from 'lucide-react';
 
-const ProjectSettings = ({ project, onUpdateProject }) => {
+const ProjectSettings = ({ project, onUpdateProject, onDeleteProject }) => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('general');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [settings, setSettings] = useState({
     name: project.name,
     description: project.description,
@@ -93,6 +97,27 @@ const ProjectSettings = ({ project, onUpdateProject }) => {
     } catch (error) {
       console.error('Error updating project:', error);
       // You can add an error toast notification here
+    }
+  };
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const result = await onDeleteProject(project.id || project._id);
+      if (result && result.success) {
+        console.log('Project deleted successfully:', result.message);
+        // Navigate back to dashboard
+        navigate('/dashboard');
+      } else {
+        console.error('Failed to delete project:', result?.message);
+        alert('Failed to delete project. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      alert('An error occurred while deleting the project.');
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
     }
   };
 
@@ -426,10 +451,11 @@ const ProjectSettings = ({ project, onUpdateProject }) => {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
+              onClick={() => setShowDeleteConfirm(true)}
               className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center space-x-2"
             >
               <Trash2 className="h-4 w-4" />
-              <span>Delete</span>
+              <span>Delete Project</span>
             </motion.button>
           </div>
         </div>
@@ -521,6 +547,84 @@ const ProjectSettings = ({ project, onUpdateProject }) => {
           </div>
         </motion.div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={() => setShowDeleteConfirm(false)}
+        >
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.95, opacity: 0 }}
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4 shadow-xl"
+          >
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="flex-shrink-0 w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
+                <Trash2 className="h-5 w-5 text-red-600 dark:text-red-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                  Delete Project
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  This action cannot be undone
+                </p>
+              </div>
+            </div>
+            
+            <div className="mb-6">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                Are you sure you want to delete <strong>"{project?.name}"</strong>?
+              </p>
+              <p className="text-sm text-red-600 dark:text-red-400">
+                This will permanently delete:
+              </p>
+              <ul className="text-sm text-red-600 dark:text-red-400 mt-2 ml-4 space-y-1">
+                <li>• The project and all its data</li>
+                <li>• All issues within this project</li>
+                <li>• All notes within this project</li>
+              </ul>
+            </div>
+
+            <div className="flex justify-end space-x-3">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={isDeleting}
+                className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50"
+              >
+                Cancel
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 flex items-center space-x-2"
+              >
+                {isDeleting ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <span>Deleting...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="h-4 w-4" />
+                    <span>Delete Project</span>
+                  </>
+                )}
+              </motion.button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </motion.div>
   );
 };

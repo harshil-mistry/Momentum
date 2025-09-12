@@ -3,6 +3,7 @@ const router = express.Router()
 const auth = require('../middleware/auth')
 const project = require('../models/Project')
 const Issue = require('../models/Issue')
+const Note = require('../models/Note')
 const { body, validationResult, check } = require('express-validator');
 
 //Route to fetch all projects for the user
@@ -41,15 +42,30 @@ router.get('/', auth, async (req, res, next) => {
                 const isOverdue = proj.isOverdue()
                 const deadlineStatus = proj.getDeadlineStatus()
                 
-                return {
+                // Ensure daysUntilDeadline is properly handled for serialization
+                const safeProject = {
                     ...projectObj,
                     completionPercentage,
                     totalIssues,
                     completedIssues,
-                    daysUntilDeadline,
-                    isOverdue,
-                    deadlineStatus
+                    daysUntilDeadline: daysUntilDeadline !== null ? daysUntilDeadline : undefined,
+                    isOverdue: Boolean(isOverdue),
+                    deadlineStatus: deadlineStatus || 'no-deadline'
                 }
+                
+                // Debug logging for projects with deadlines
+                if (proj.deadline) {
+                    console.log('Backend - Project with deadline:', {
+                        name: proj.name,
+                        deadline: proj.deadline,
+                        daysUntilDeadline: safeProject.daysUntilDeadline,
+                        isOverdue: safeProject.isOverdue,
+                        deadlineStatus: safeProject.deadlineStatus,
+                        originalDaysUntil: daysUntilDeadline
+                    });
+                }
+                
+                return safeProject
             })
         )
         
@@ -143,6 +159,17 @@ router.get('/:id', auth, async (req, res, next) => {
         const daysUntilDeadline = data.getDaysUntilDeadline()
         const isOverdue = data.isOverdue()
         const deadlineStatus = data.getDeadlineStatus()
+
+        // Debug logging for single project with deadline
+        if (data.deadline) {
+            console.log('Backend - Single project with deadline:', {
+                name: data.name,
+                deadline: data.deadline,
+                daysUntilDeadline,
+                isOverdue,
+                deadlineStatus
+            });
+        }
 
         const projectWithCompletion = {
             ...data.toObject(),
@@ -307,22 +334,39 @@ router.delete('/:id', [auth], async (req, res) => {
         })
     }
 
-    //Deleting the project
+    //Deleting the project and all related data
     try {
         const project_data = await project.findById(project_id)
-        if (project_data) await project_data.deleteOne()
-        else return res.status(404).json({
-            "status": "failed",
-            "errors": [{
-                "msg": "Project not found"
-            }]
-        })
+        if (!project_data) {
+            return res.status(404).json({
+                "status": "failed",
+                "errors": [{
+                    "msg": "Project not found"
+                }]
+            })
+        }
+
+        // Delete all related issues
+        const deletedIssues = await Issue.deleteMany({ project: project_id })
+        console.log(`Deleted ${deletedIssues.deletedCount} issues for project ${project_id}`)
+
+        // Delete all related notes
+        const deletedNotes = await Note.deleteMany({ project: project_id })
+        console.log(`Deleted ${deletedNotes.deletedCount} notes for project ${project_id}`)
+
+        // Finally delete the project itself
+        await project_data.deleteOne()
+        console.log(`Deleted project ${project_id}`)
+
         return res.json({
             "status": "success",
-            "message": "Project Deleted Successfully"
+            "message": "Project and all related data deleted successfully",
+            "details": {
+                "deletedIssues": deletedIssues.deletedCount,
+                "deletedNotes": deletedNotes.deletedCount
+            }
         })
     } catch (error) {
-
         console.log(error)
         res.status(500).json({
             "status": "failed",

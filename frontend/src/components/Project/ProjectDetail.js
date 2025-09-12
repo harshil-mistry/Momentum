@@ -334,6 +334,28 @@ const ProjectDetail = () => {
     }
   }, []);
 
+  // Delete project function
+  const deleteProject = useCallback(async (projectId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.delete(`/project/${projectId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      console.log('Project deleted successfully:', response.data);
+      
+      return { success: true, message: 'Project deleted successfully', data: response.data };
+      
+    } catch (err) {
+      console.error('Failed to delete project:', err);
+      
+      const errorMessage = err.response?.data?.errors?.[0]?.msg || 'Failed to delete project. Please try again.';
+      return { success: false, message: errorMessage };
+    }
+  }, []);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -428,6 +450,7 @@ const ProjectDetail = () => {
                   <ProjectSettings 
                     project={project} 
                     onUpdateProject={updateProject}
+                    onDeleteProject={deleteProject}
                   />
                 } 
               />
