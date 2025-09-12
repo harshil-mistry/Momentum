@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Plus, Loader } from 'lucide-react';
+import { X, Plus, Loader, Calendar } from 'lucide-react';
 import axios from 'axios';
 
 const CreateProjectModal = ({ isOpen, onClose, onProjectCreated }) => {
   const [formData, setFormData] = useState({
     name: '',
-    description: ''
+    description: '',
+    deadline: ''
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState([]);
@@ -33,7 +34,7 @@ const CreateProjectModal = ({ isOpen, onClose, onProjectCreated }) => {
       
       if (response.data.status === 'success') {
         // Reset form
-        setFormData({ name: '', description: '' });
+        setFormData({ name: '', description: '', deadline: '' });
         // Notify parent component to refresh projects
         onProjectCreated();
         // Close modal
@@ -53,7 +54,7 @@ const CreateProjectModal = ({ isOpen, onClose, onProjectCreated }) => {
 
   const handleClose = () => {
     if (!isLoading) {
-      setFormData({ name: '', description: '' });
+      setFormData({ name: '', description: '', deadline: '' });
       setErrors([]);
       onClose();
     }
@@ -155,7 +156,7 @@ const CreateProjectModal = ({ isOpen, onClose, onProjectCreated }) => {
                 </div>
 
                 {/* Project Description */}
-                <div className="mb-6">
+                <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Description (Optional)
                   </label>
@@ -168,6 +169,28 @@ const CreateProjectModal = ({ isOpen, onClose, onProjectCreated }) => {
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 disabled:opacity-50 resize-none"
                     placeholder="Describe your project (optional)"
                   />
+                </div>
+
+                {/* Project Deadline */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <div className="flex items-center space-x-2">
+                      <Calendar className="h-4 w-4" />
+                      <span>Deadline (Optional)</span>
+                    </div>
+                  </label>
+                  <input
+                    type="date"
+                    name="deadline"
+                    value={formData.deadline}
+                    onChange={handleInputChange}
+                    disabled={isLoading}
+                    min={new Date().toISOString().split('T')[0]} // Prevent selecting past dates
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 disabled:opacity-50"
+                  />
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    Set a tentative deadline for your project completion
+                  </p>
                 </div>
 
                 {/* Action Buttons */}

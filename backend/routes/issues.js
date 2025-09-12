@@ -189,7 +189,7 @@ router.get('/:project_id', auth, async (req, res) => {
         const project_id = req.params.project_id
         const project_data = await project.findById(project_id)
         if (project_data.owner != req.user) {
-            res.status(401).json({
+            return res.status(401).json({
                 "status": "failed",
                 "errors": [{
                     "msg": "Unauthorized access"

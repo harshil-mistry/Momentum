@@ -305,6 +305,35 @@ const ProjectDetail = () => {
     }
   }, [fetchNotes]);
 
+  // Update project function
+  const updateProject = useCallback(async (projectId, projectData) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.put(`/project/${projectId}`, 
+        projectData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      console.log('Project updated successfully:', response.data);
+      
+      // Update the project state with the updated data
+      setProject(response.data);
+      
+      return { success: true, message: 'Project updated successfully' };
+      
+    } catch (err) {
+      console.error('Failed to update project:', err);
+      
+      const errorMessage = err.response?.data?.errors?.[0]?.msg || 'Failed to update project. Please try again.';
+      return { success: false, message: errorMessage };
+    }
+  }, []);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -398,7 +427,7 @@ const ProjectDetail = () => {
                 element={
                   <ProjectSettings 
                     project={project} 
-                    setProject={setProject}
+                    onUpdateProject={updateProject}
                   />
                 } 
               />

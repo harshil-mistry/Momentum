@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Calendar, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Calendar, TrendingUp, Clock, AlertTriangle } from 'lucide-react';
 
 const ProjectHeader = ({ project }) => {
   const itemVariants = {
@@ -65,7 +65,42 @@ const ProjectHeader = ({ project }) => {
           </div>
 
           {/* Stats */}
-          <div className="flex items-center space-x-4 text-sm">
+          <div className="flex items-center space-x-6 text-sm">
+            {/* Deadline Information */}
+            {project.deadline && (
+              <div className="flex items-center space-x-2">
+                {project.isOverdue ? (
+                  <AlertTriangle className="h-4 w-4 text-red-500" />
+                ) : (
+                  <Clock className="h-4 w-4 text-blue-500" />
+                )}
+                <div className="flex flex-col">
+                  <span className={`font-medium ${
+                    project.isOverdue 
+                      ? 'text-red-600 dark:text-red-400' 
+                      : project.daysUntilDeadline <= 3
+                      ? 'text-orange-600 dark:text-orange-400'
+                      : 'text-blue-600 dark:text-blue-400'
+                  }`}>
+                    {project.isOverdue 
+                      ? `Overdue by ${Math.abs(project.daysUntilDeadline)} days`
+                      : project.daysUntilDeadline === 0
+                      ? 'Due today'
+                      : `${project.daysUntilDeadline} days left`
+                    }
+                  </span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    Due {new Date(project.deadline).toLocaleDateString('en-US', { 
+                      month: 'short', 
+                      day: 'numeric',
+                      year: 'numeric'
+                    })}
+                  </span>
+                </div>
+              </div>
+            )}
+            
+            {/* Creation Date */}
             <div className="flex items-center space-x-2">
               <Calendar className="h-4 w-4 text-gray-400" />
               <span className="text-gray-600 dark:text-gray-400">

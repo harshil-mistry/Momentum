@@ -35,11 +35,20 @@ router.get('/', auth, async (req, res, next) => {
                 // Calculate completion percentage
                 const completionPercentage = Math.round((completedIssues / totalIssues) * 100)
                 
+                // Add deadline information
+                const projectObj = proj.toObject()
+                const daysUntilDeadline = proj.getDaysUntilDeadline()
+                const isOverdue = proj.isOverdue()
+                const deadlineStatus = proj.getDeadlineStatus()
+                
                 return {
-                    ...proj.toObject(),
+                    ...projectObj,
                     completionPercentage,
                     totalIssues,
-                    completedIssues
+                    completedIssues,
+                    daysUntilDeadline,
+                    isOverdue,
+                    deadlineStatus
                 }
             })
         )
@@ -56,9 +65,10 @@ router.get('/', auth, async (req, res, next) => {
     }
 })
 
-//Route to add a nre Project
+//Route to add a new Project
 router.post('/', [auth, [
     body('name', 'Please enter a name').notEmpty(),
+    body('deadline', 'Deadline must be a valid date').if(body('deadline').exists()).isISO8601()
 ]], async (req, res, next) => {
 
     //Performing data validation
@@ -70,13 +80,14 @@ router.post('/', [auth, [
         })
     }
 
-    //Creting a new Project
-    const { name, description } = req.body
+    //Creating a new Project
+    const { name, description, deadline } = req.body
     const project_data = {
         name,
         owner: req.user
     }
     if (description) project_data.description = description
+    if (deadline) project_data.deadline = new Date(deadline)
 
     const new_project = await new project(project_data)
 
@@ -128,11 +139,19 @@ router.get('/:id', auth, async (req, res, next) => {
             completionPercentage = Math.round((completedIssues / totalIssues) * 100)
         }
 
+        // Add deadline information
+        const daysUntilDeadline = data.getDaysUntilDeadline()
+        const isOverdue = data.isOverdue()
+        const deadlineStatus = data.getDeadlineStatus()
+
         const projectWithCompletion = {
             ...data.toObject(),
             completionPercentage,
             totalIssues,
-            completedIssues
+            completedIssues,
+            daysUntilDeadline,
+            isOverdue,
+            deadlineStatus
         }
 
         res.json(projectWithCompletion)
@@ -149,7 +168,8 @@ router.get('/:id', auth, async (req, res, next) => {
 
 //updating project details
 router.put('/:id', [auth, [
-    body('name', 'Please enter a name').notEmpty()
+    body('name', 'Please enter a name').notEmpty(),
+    body('deadline', 'Deadline must be a valid date').if(body('deadline').exists()).isISO8601()
 ]], async (req, res) => {
 
     //Performing data validation
@@ -188,16 +208,25 @@ router.put('/:id', [auth, [
         })
     }
 
-    const { name, description } = req.body
+    const { name, description, deadline } = req.body
     const project_data = {
         name,
         description,
         owner: req.user
     }
+    
+    // Handle deadline field
+    if (deadline !== undefined) {
+        if (deadline === null || deadline === '') {
+            project_data.deadline = null
+        } else {
+            project_data.deadline = new Date(deadline)
+        }
+    }
 
     //updating project details
     try {
-        const updated_project = await project.findByIdAndUpdate(project_id, project_data)
+        const updated_project = await project.findByIdAndUpdate(project_id, project_data, { new: true })
         if (!updated_project) {
             return res.status(400).json({
                 "status": "failed",
@@ -206,10 +235,37 @@ router.put('/:id', [auth, [
                 }]
             })
         }
-        res.json({
-            "status": "success",
-            "message": "Project Details Updated",
-        })
+
+        // Calculate completion percentage for the updated project
+        const totalIssues = await Issue.countDocuments({ project: project_id })
+        
+        let completionPercentage = 0
+        let completedIssues = 0
+        
+        if (totalIssues > 0) {
+            completedIssues = await Issue.countDocuments({ 
+                project: project_id, 
+                status: 2 
+            })
+            completionPercentage = Math.round((completedIssues / totalIssues) * 100)
+        }
+
+        // Add deadline information
+        const daysUntilDeadline = updated_project.getDaysUntilDeadline()
+        const isOverdue = updated_project.isOverdue()
+        const deadlineStatus = updated_project.getDeadlineStatus()
+
+        const projectWithCompletion = {
+            ...updated_project.toObject(),
+            completionPercentage,
+            totalIssues,
+            completedIssues,
+            daysUntilDeadline,
+            isOverdue,
+            deadlineStatus
+        }
+
+        res.json(projectWithCompletion)
     } catch (err) {
         console.log(err)
         res.status(500).json({

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Settings, 
@@ -22,6 +22,7 @@ const ProjectSettings = ({ project, onUpdateProject }) => {
   const [settings, setSettings] = useState({
     name: project.name,
     description: project.description,
+    deadline: project.deadline ? new Date(project.deadline).toISOString().split('T')[0] : '',
     visibility: project.visibility || 'private',
     notifications: {
       email: true,
@@ -43,9 +44,56 @@ const ProjectSettings = ({ project, onUpdateProject }) => {
     { id: 'danger', name: 'Danger Zone', icon: Trash2 }
   ];
 
-  const handleSave = () => {
-    onUpdateProject(project.id, settings);
-    // Show success toast or feedback
+  // Update settings when project prop changes
+  useEffect(() => {
+    if (project) {
+      // Handle deadline conversion more safely
+      let formattedDeadline = '';
+      if (project.deadline) {
+        try {
+          const deadlineDate = new Date(project.deadline);
+          if (!isNaN(deadlineDate.getTime())) {
+            formattedDeadline = deadlineDate.toISOString().split('T')[0];
+          }
+        } catch (error) {
+          console.error('Error parsing deadline:', error);
+        }
+      }
+
+      setSettings({
+        name: project.name || '',
+        description: project.description || '',
+        deadline: formattedDeadline,
+        visibility: project.visibility || 'private',
+        notifications: {
+          email: true,
+          push: true,
+          mentions: true
+        },
+        permissions: {
+          allowGuests: false,
+          requireApproval: true,
+          publicComments: false
+        }
+      });
+    }
+  }, [project]);
+
+  const handleSave = async () => {
+    console.log('ProjectSettings - handleSave called with:', settings);
+    try {
+      const result = await onUpdateProject(project.id || project._id, settings);
+      if (result && result.success) {
+        console.log('Project updated successfully:', result.message);
+        // You can add a success toast notification here
+      } else {
+        console.error('Failed to update project:', result?.message);
+        // You can add an error toast notification here
+      }
+    } catch (error) {
+      console.error('Error updating project:', error);
+      // You can add an error toast notification here
+    }
   };
 
   const containerVariants = {
@@ -91,6 +139,48 @@ const ProjectSettings = ({ project, onUpdateProject }) => {
           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
           placeholder="Describe your project"
         />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <div className="flex items-center space-x-2">
+            <Calendar className="h-4 w-4" />
+            <span>Project Deadline</span>
+          </div>
+        </label>
+        <div className="space-y-2">
+          <input
+            type="date"
+            value={settings.deadline}
+            onChange={(e) => setSettings({ ...settings, deadline: e.target.value })}
+            min={new Date().toISOString().split('T')[0]}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          />
+          <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+            <span>Set a target completion date for your project</span>
+            {settings.deadline && (
+              <button
+                type="button"
+                onClick={() => setSettings({ ...settings, deadline: '' })}
+                className="text-red-500 hover:text-red-700 dark:hover:text-red-400 transition-colors"
+              >
+                Clear deadline
+              </button>
+            )}
+          </div>
+          {settings.deadline && (
+            <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <p className="text-xs text-blue-800 dark:text-blue-400">
+                Deadline: {new Date(settings.deadline).toLocaleDateString('en-US', { 
+                  weekday: 'long',
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* <div>
