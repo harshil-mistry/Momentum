@@ -107,7 +107,7 @@ const ProjectDetail = () => {
   const fetchProject = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`/issue/${projectId}`, {
+      const response = await axios.get(`/project/${projectId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -201,6 +201,35 @@ const ProjectDetail = () => {
     }
   }, []);
 
+  // Add new issue function
+  const addIssue = useCallback(async (issueData) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(`/issue/${projectId}`, 
+        issueData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      console.log('Issue created successfully:', response.data);
+      
+      // Refresh issues to get the new issue from backend
+      await fetchIssues();
+      
+      return { success: true, message: 'Issue created successfully' };
+      
+    } catch (err) {
+      console.error('Failed to create issue:', err);
+      
+      const errorMessage = err.response?.data?.errors?.[0]?.msg || 'Failed to create issue. Please try again.';
+      return { success: false, message: errorMessage };
+    }
+  }, [projectId, fetchIssues]);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -274,6 +303,7 @@ const ProjectDetail = () => {
                   <IssuesManager 
                     issues={issues} 
                     setIssues={setIssues}
+                    onAddIssue={addIssue}
                   />
                 } 
               />
