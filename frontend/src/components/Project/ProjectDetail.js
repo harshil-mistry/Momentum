@@ -226,6 +226,62 @@ const ProjectDetail = () => {
     }
   }, [projectId, fetchIssues]);
 
+  // Edit issue function
+  const editIssue = useCallback(async (issueId, issueData) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.put(`/issue/${issueId}`, 
+        issueData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      showApiResponse(response, `Issue "${issueData.name}" updated successfully!`);
+      
+      // Refresh issues to get the updated data
+      await fetchIssues();
+      
+      return { success: true, message: 'Issue updated successfully' };
+      
+    } catch (err) {
+      console.error('Failed to update issue:', err);
+      showApiError(err, 'Failed to update issue. Please try again.');
+      
+      const errorMessage = err.response?.data?.errors?.[0]?.msg || 'Failed to update issue. Please try again.';
+      return { success: false, message: errorMessage };
+    }
+  }, [fetchIssues, showApiResponse, showApiError]);
+
+  // Delete issue function
+  const deleteIssue = useCallback(async (issueId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.delete(`/issue/${issueId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      showApiResponse(response, 'Issue deleted successfully!');
+      
+      // Refresh issues to reflect the deletion
+      await fetchIssues();
+      
+      return { success: true, message: 'Issue deleted successfully' };
+      
+    } catch (err) {
+      console.error('Failed to delete issue:', err);
+      showApiError(err, 'Failed to delete issue. Please try again.');
+      
+      const errorMessage = err.response?.data?.errors?.[0]?.msg || 'Failed to delete issue. Please try again.';
+      return { success: false, message: errorMessage };
+    }
+  }, [fetchIssues, showApiResponse, showApiError]);
+
   // Notes CRUD functions
   const addNote = useCallback(async (noteData) => {
     try {
@@ -437,6 +493,8 @@ const ProjectDetail = () => {
                     issues={issues} 
                     setIssues={setIssues}
                     onAddIssue={addIssue}
+                    onEditIssue={editIssue}
+                    onDeleteIssue={deleteIssue}
                   />
                 } 
               />

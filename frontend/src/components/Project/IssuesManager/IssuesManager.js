@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Search, Filter, MoreVertical, X } from 'lucide-react';
 import IssuesList from './IssuesList';
 
-const IssuesManager = ({ issues, setIssues, onAddIssue }) => {
+const IssuesManager = ({ issues, setIssues, onAddIssue, onEditIssue, onDeleteIssue }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPriority, setFilterPriority] = useState('all');
@@ -181,7 +181,12 @@ const IssuesManager = ({ issues, setIssues, onAddIssue }) => {
 
       {/* Issues List */}
       <motion.div variants={itemVariants}>
-        <IssuesList issues={filteredIssues} setIssues={setIssues} />
+        <IssuesList 
+          issues={filteredIssues} 
+          setIssues={setIssues} 
+          onEditIssue={onEditIssue}
+          onDeleteIssue={onDeleteIssue}
+        />
       </motion.div>
 
       {/* Stats Bar */}
