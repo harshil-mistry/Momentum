@@ -1,5 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Routes, Route, useParams, Navigate } from 'react-router-dom';
+import axios from 'axios';
 import { motion } from 'framer-motion';
 import ProjectSidebar from './ProjectSidebar';
 import KanbanBoard from './KanbanBoard/KanbanBoard';
@@ -96,16 +97,108 @@ const staticNotes = [
 
 const ProjectDetail = () => {
   const { projectId } = useParams();
-  const [issues, setIssues] = useState(staticIssues);
+  const [issues, setIssues] = useState([]);
   const [notes, setNotes] = useState(staticNotes);
-  const [project, setProject] = useState(staticProjectData);
+  const [project, setProject] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const updateIssueStatus = useCallback((issueId, newStatus) => {
+  // Fetch project details
+  const fetchProject = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`/issue/${projectId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      setProject(response.data);
+    } catch (err) {
+      console.error('Error fetching project:', err);
+      setError('Failed to fetch project details');
+    }
+  }, [projectId]);
+
+  // Fetch project issues
+  const fetchIssues = useCallback(async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`/issue/${projectId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      setIssues(response.data.issues || []);
+    } catch (err) {
+      console.error('Error fetching issues:', err);
+      setError('Failed to fetch issues');
+    }
+  }, [projectId]);
+
+  // Load data on component mount
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        await Promise.all([fetchProject(), fetchIssues()]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    if (projectId) {
+      loadData();
+    }
+  }, [projectId, fetchProject, fetchIssues]);
+
+  const updateIssueStatus = useCallback(async (issueId, newStatus) => {
+    console.log('Drag and drop detected:', {
+      issueId,
+      newStatus,
+      timestamp: new Date().toISOString()
+    });
+
+    // Optimistically update the UI first for better UX
     setIssues(prevIssues =>
       prevIssues.map(issue =>
-        issue.id === issueId ? { ...issue, status: newStatus } : issue
+        (issue._id || issue.id) === issueId ? { ...issue, status: newStatus } : issue
       )
     );
+
+    // Make API call to update status in backend
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.patch(`/issue/${issueId}`, 
+        { status: newStatus },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      console.log('Issue status updated successfully:', response.data);
+      
+      // Optionally refresh issues to ensure sync with backend
+      // await fetchIssues();
+      
+    } catch (err) {
+      console.error('Failed to update issue status:', err);
+      
+      // Revert the optimistic update if API call fails
+      setIssues(prevIssues =>
+        prevIssues.map(issue =>
+          (issue._id || issue.id) === issueId ? { 
+            ...issue, 
+            status: prevIssues.find(p => (p._id || p.id) === issueId)?.status || 0 
+          } : issue
+        )
+      );
+
+      // Show error message (you can replace this with a proper toast notification)
+      alert('Failed to update issue status. Please try again.');
+    }
   }, []);
 
   const containerVariants = {
@@ -116,6 +209,39 @@ const ProjectDetail = () => {
     }
   };
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading project...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-500 text-6xl mb-4">⚠️</div>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            Something went wrong
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">{error}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <motion.div
       variants={containerVariants}
@@ -125,7 +251,7 @@ const ProjectDetail = () => {
     >
       <div className="flex h-screen pt-16">
         {/* Sidebar */}
-        <ProjectSidebar projectId={projectId} project={project} />
+        <ProjectSidebar projectId={projectId} project={project || staticProjectData} />
         
         {/* Main Content */}
         <div className="flex-1 flex flex-col overflow-hidden">

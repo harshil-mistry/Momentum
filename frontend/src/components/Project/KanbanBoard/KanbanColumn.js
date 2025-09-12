@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import { Droppable } from '@hello-pangea/dnd';
-import { Plus } from 'lucide-react';
 import IssueCard from './IssueCard';
 
 const KanbanColumn = memo(({ column }) => {
@@ -16,11 +15,6 @@ const KanbanColumn = memo(({ column }) => {
             <span className={`px-2 py-1 text-xs font-medium rounded-full ${column.bgColor} ${column.headerColor}`}>
               {column.issues.length}
             </span>
-            <button
-              className={`p-1 rounded hover:bg-white/50 dark:hover:bg-gray-800/50 transition-colors duration-150 ${column.headerColor}`}
-            >
-              <Plus className="h-4 w-4" />
-            </button>
           </div>
         </div>
       </div>
@@ -50,11 +44,11 @@ const KanbanColumn = memo(({ column }) => {
               {column.issues.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-12 text-gray-400 dark:text-gray-600">
                   <div className="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mb-3">
-                    <Plus className="h-8 w-8" />
+                    <div className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-600"></div>
                   </div>
                   <p className="text-sm font-medium">No issues yet</p>
                   <p className="text-xs text-center mt-1">
-                    Drag issues here or click the + button to add new ones
+                    Drag issues here or create new ones
                   </p>
                 </div>
               )}
