@@ -159,7 +159,7 @@ const Navbar = () => {
           className={`md:hidden ${isMenuOpen ? 'block' : 'hidden'}`}
         >
           <div className="py-4 space-y-4">
-            {navItems.map((item, index) => (
+            {/* {navItems.map((item, index) => (
               <motion.a
                 key={index}
                 href={item.href}
@@ -169,7 +169,7 @@ const Navbar = () => {
               >
                 {item.name}
               </motion.a>
-            ))}
+            ))} */}
             <div className="pt-4 space-y-3">
               {isAuthenticated ? (
                 <>
@@ -201,7 +201,7 @@ const Navbar = () => {
                 <>
                   <Link to="/signin" onClick={() => setIsMenuOpen(false)}>
                     <motion.div
-                      className="block w-full text-left text-green-600 dark:text-green-400 font-medium"
+                      className="block w-full text-center text-green-600 dark:text-green-400 font-medium pb-6"
                       whileHover={{ x: 10 }}
                     >
                       Sign In
