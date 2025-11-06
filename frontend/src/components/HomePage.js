@@ -11,19 +11,14 @@ const HomePage = () => {
       description: "Organize your projects with intuitive boards and timelines that adapt to your workflow."
     },
     {
-      icon: <Users className="w-6 h-6" />,
-      title: "Team Collaboration",
-      description: "Work seamlessly with your team through real-time updates and shared workspaces."
-    },
-    {
       icon: <TrendingUp className="w-6 h-6" />,
       title: "Progress Tracking",
       description: "Monitor project progress with detailed analytics and customizable reporting tools."
     },
     {
       icon: <Zap className="w-6 h-6" />,
-      title: "Lightning Fast",
-      description: "Built for speed with modern technologies that keep your team moving forward."
+      title: "Smart Notes Keeping",
+      description: "Keep detailed notes and documentation for future reference with powerful organization capabilities."
     }
   ];
 
