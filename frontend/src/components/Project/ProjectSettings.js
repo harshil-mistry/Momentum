@@ -42,7 +42,7 @@ const ProjectSettings = ({ project, onUpdateProject, onDeleteProject }) => {
 
   const tabs = [
     { id: 'general', name: 'General', icon: Settings },
-    { id: 'members', name: 'Members', icon: Users },
+    // { id: 'members', name: 'Members', icon: Users },
     // { id: 'notifications', name: 'Notifications', icon: Bell },
     // { id: 'permissions', name: 'Permissions', icon: Shield },
     { id: 'danger', name: 'Danger Zone', icon: Trash2 }
