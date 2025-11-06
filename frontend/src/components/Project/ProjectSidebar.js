@@ -12,8 +12,14 @@ import {
   TrendingUp
 } from 'lucide-react';
 
-const ProjectSidebar = ({ projectId, project }) => {
+const ProjectSidebar = ({ projectId, project, issues = [], notes = [] }) => {
   const location = useLocation();
+  
+  // Calculate dynamic counts
+  const issuesCount = issues.length;
+  const notesCount = notes.length;
+  const completedIssuesCount = issues.filter(issue => issue.status === 2).length;
+  const pendingIssuesCount = issues.filter(issue => issue.status !== 2).length;
   
   const navigationItems = [
     {
@@ -26,15 +32,15 @@ const ProjectSidebar = ({ projectId, project }) => {
       name: 'Issues',
       path: `/project/${projectId}/issues`,
       icon: List,
-      description: 'Manage all issues',
-      badge: 6 // Static count for demo
+      description: issuesCount > 0 ? `${issuesCount} total issues` : 'No issues yet',
+      badge: issuesCount
     },
     {
       name: 'Notes',
       path: `/project/${projectId}/notes`,
       icon: FileText,
-      description: 'Project documentation',
-      badge: 3 // Static count for demo
+      description: notesCount > 0 ? `${notesCount} total notes` : 'No notes yet',
+      badge: notesCount
     },
     {
       name: 'Settings',
@@ -154,14 +160,19 @@ const ProjectSidebar = ({ projectId, project }) => {
                   </div>
                   
                   {/* Badge */}
-                  {item.badge && (
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      isActive
-                        ? 'bg-white/20 text-white'
-                        : 'bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300 group-hover:bg-green-100 group-hover:text-green-600'
-                    }`}>
+                  {item.badge !== undefined && item.badge > 0 && (
+                    <motion.span 
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                      className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        isActive
+                          ? 'bg-white/20 text-white'
+                          : 'bg-gray-100 dark:bg-gray-600 text-gray-600 dark:text-gray-300 group-hover:bg-green-100 group-hover:text-green-600'
+                      }`}
+                    >
                       {item.badge}
-                    </span>
+                    </motion.span>
                   )}
                 </NavLink>
               </motion.div>
@@ -173,14 +184,36 @@ const ProjectSidebar = ({ projectId, project }) => {
       {/* Quick Stats */}
       <div className="p-4 border-t border-gray-200 dark:border-gray-700">
         <div className="grid grid-cols-2 gap-3 text-center">
-          <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
-            <div className="text-lg font-bold text-green-600 dark:text-green-400">9</div>
+          <motion.div 
+            whileHover={{ scale: 1.05 }}
+            className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg"
+          >
+            <motion.div 
+              key={`completed-${completedIssuesCount}`}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="text-lg font-bold text-green-600 dark:text-green-400"
+            >
+              {completedIssuesCount}
+            </motion.div>
             <div className="text-xs text-green-600 dark:text-green-400">Done</div>
-          </div>
-          <div className="p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
-            <div className="text-lg font-bold text-orange-600 dark:text-orange-400">3</div>
+          </motion.div>
+          <motion.div 
+            whileHover={{ scale: 1.05 }}
+            className="p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg"
+          >
+            <motion.div 
+              key={`pending-${pendingIssuesCount}`}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="text-lg font-bold text-orange-600 dark:text-orange-400"
+            >
+              {pendingIssuesCount}
+            </motion.div>
             <div className="text-xs text-orange-600 dark:text-orange-400">Pending</div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </div>

@@ -469,7 +469,12 @@ const ProjectDetail = () => {
     >
       <div className="flex h-screen pt-16">
         {/* Sidebar */}
-        <ProjectSidebar projectId={projectId} project={project || staticProjectData} />
+        <ProjectSidebar 
+          projectId={projectId} 
+          project={project || staticProjectData} 
+          issues={issues}
+          notes={notes}
+        />
         
         {/* Main Content */}
         <div className="flex-1 flex flex-col overflow-hidden">
